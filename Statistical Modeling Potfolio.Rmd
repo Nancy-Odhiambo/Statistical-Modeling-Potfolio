@@ -1,0 +1,38 @@
+---
+title: "STA Portfolio"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+Loading Packages
+```{```{r setup, include=FALSE}}
+library(tidyverse)
+library(tidymodels)
+library(janitor)
+library(GGally)
+library(glmnet)
+library(discrim)
+library(MASS)
+library(nnet)
+tidymodels_prefer()
+```
+
+# Introduction
+This portfolio highlights the statistical modeling skills I developed throughout my Statistical Modeling I coursework. It is based on the Breast Cancer Wisconsin Diagnostic Dataset, which contains 569 tumor samples and 30 numerical predictors describing characteristics of cell nuclei.
+
+The project demonstrates how probability theory underpins statistical inference and guides the modeling process. It emphasizes selecting and applying appropriate generalized linear models, as well as fitting, validating, interpreting, and evaluating those models in a rigorous and systematic way.
+
+The techniques used include multiple regression, multinomial logistic regression, discriminant analysis, regularization methods, and polynomial regression. Together, these approaches illustrate my ability to analyze complex data, compare modeling strategies, and draw meaningful conclusions.
+
+Overall, this work reflects my development as a statistical graduate student, showcasing both my technical proficiency and my ability to apply statistical methods effectively in a real-world context.
+
+```{r}
+# Data Loading 
+```
+
+
