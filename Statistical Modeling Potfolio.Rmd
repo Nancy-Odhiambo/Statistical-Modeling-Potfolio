@@ -1,16 +1,141 @@
 ---
-title: "STA Portfolio"
-author: "Your Name"
-date: "`r Sys.Date()`"
+title: "Predicting Breast Cancer Diagnosis"
+author: "Nancy Odhiambo"
 output:
   html_document:
     toc: true
-    toc_depth: 3
-    toc_float: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+    number_sections: true
+    fig_caption: true
 ---
 
-Loading Packages
-```{```{r setup, include=FALSE}}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = TRUE,
+  message    = FALSE,
+  warning    = FALSE,
+  fig.align  = "center",
+  fig.width  = 8,
+  fig.height = 5
+)
+```
+
+```{css, echo=FALSE}
+body {
+  background-color: #eef2f7;
+}
+.main-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 30px 50px !important;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.container-fluid {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 50px !important;
+  padding-right: 50px !important;
+}
+.title {
+  font-size: 3.5em;
+  font-weight: bold;
+  text-align: center;
+}
+.author {
+  text-align: center;
+}
+```
+
+
+# Introduction {.tabset}
+
+## About This Portfolio
+
+This portfolio documents my journey through **STA 631: Statistical Modeling I** at Grand Valley State University. It consolidates the modeling techniques, coding practices, and statistical reasoning I developed over the semester into a single, reproducible R Markdown document.
+
+The portfolio is organized around the following structure:
+
+1. **Data Preparation** — Loading, inspecting, cleaning, and splitting the data using tidyverse and tidymodels principles.
+2. **Exploratory Data Analysis** — Visualizing distributions, correlations, and group differences to guide modeling decisions.
+3. **Modeling** — Building and interpreting logistic regression, multinomial logistic regression, linear discriminant analysis (LDA), ridge and lasso regression, and polynomial regression models.
+4. **Model Validation** — Evaluating and comparing models using cross-validation, ROC curves, and performance metrics.
+5. **Show-and-Tell Reflections** — Five reflective sections, each aligned with a core course learning objective, with code examples and detailed explanations.
+6. **Participation Reflection** — A summary of my engagement, collaboration, and growth throughout the course.
+
+## About the Dataset
+
+I use the **Breast Cancer Wisconsin (Diagnostic) Dataset** throughout this portfolio. The dataset contains 569 observations of fine needle aspirate (FNA) measurements from breast masses, with 30 numeric features describing cell nuclei characteristics (mean, standard error, and worst values for radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension). The binary outcome variable `diagnosis` classifies each tumor as **Malignant (M)** or **Benign (B)**.
+
+This dataset is well-suited for demonstrating classification and regression techniques because it:
+
+- Presents a meaningful binary classification task (logistic regression, LDA),
+- Contains highly correlated features (ideal for regularization with ridge/lasso),
+- Offers continuous predictors for polynomial regression,
+- Can be extended to multi-class problems for multinomial logistic regression.
+
+## Course Learning Objectives
+
+The five core learning objectives for STA 631 guide the structure of this portfolio:
+
+| # | Learning Objective |
+|---|-------------------|
+| 1 | Understand and apply foundations of probability theory and statistical inference |
+| 2 | Build, fit, and interpret regression models (linear, logistic, and extensions) |
+| 3 | Apply generalized linear models including Poisson regression and LDA |
+| 4 | Implement model selection techniques including regularization (ridge, lasso) and cross-validation |
+| 5 | Conduct reproducible statistical analyses using tidymodels and R Markdown workflows |
+
+---
+
+## Data Dictionary
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `diagnosis` | Factor | Tumor classification: M (Malignant) or B (Benign) |
+| `radius_mean` | Numeric | Mean distance from center to perimeter of the cell nucleus |
+| `texture_mean` | Numeric | Mean standard deviation of gray-scale values |
+| `perimeter_mean` | Numeric | Mean perimeter of the cell nucleus |
+| `area_mean` | Numeric | Mean area of the cell nucleus |
+| `smoothness_mean` | Numeric | Mean local variation in radius lengths |
+| `compactness_mean` | Numeric | Mean of perimeter² / area − 1.0 |
+| `concavity_mean` | Numeric | Mean severity of concave portions of the contour |
+| `concave_points_mean` | Numeric | Mean number of concave portions of the contour |
+| `symmetry_mean` | Numeric | Mean symmetry of the cell nucleus |
+| `fractal_dimension_mean` | Numeric | Mean coastline approximation − 1 |
+| `radius_se` | Numeric | Standard error of radius |
+| `texture_se` | Numeric | Standard error of texture |
+| `perimeter_se` | Numeric | Standard error of perimeter |
+| `area_se` | Numeric | Standard error of area |
+| `smoothness_se` | Numeric | Standard error of smoothness |
+| `compactness_se` | Numeric | Standard error of compactness |
+| `concavity_se` | Numeric | Standard error of concavity |
+| `concave_points_se` | Numeric | Standard error of concave points |
+| `symmetry_se` | Numeric | Standard error of symmetry |
+| `fractal_dimension_se` | Numeric | Standard error of fractal dimension |
+| `radius_worst` | Numeric | Largest mean radius across the three largest nuclei |
+| `texture_worst` | Numeric | Largest mean texture across the three largest nuclei |
+| `perimeter_worst` | Numeric | Largest mean perimeter across the three largest nuclei |
+| `area_worst` | Numeric | Largest mean area across the three largest nuclei |
+| `smoothness_worst` | Numeric | Largest mean smoothness across the three largest nuclei |
+| `compactness_worst` | Numeric | Largest mean compactness across the three largest nuclei |
+| `concavity_worst` | Numeric | Largest mean concavity across the three largest nuclei |
+| `concave_points_worst` | Numeric | Largest mean concave points across the three largest nuclei |
+| `symmetry_worst` | Numeric | Largest mean symmetry across the three largest nuclei |
+| `fractal_dimension_worst` | Numeric | Largest mean fractal dimension across the three largest nuclei |
+
+
+## Data Loading & Cleaning
+
+```{r}
+# Loading Packages
 library(tidyverse)
 library(tidymodels)
 library(janitor)
@@ -19,20 +144,606 @@ library(glmnet)
 library(discrim)
 library(MASS)
 library(nnet)
+library(kableExtra)
+library(corrplot)    
 tidymodels_prefer()
 ```
 
-# Introduction
-This portfolio highlights the statistical modeling skills I developed throughout my Statistical Modeling I coursework. It is based on the Breast Cancer Wisconsin Diagnostic Dataset, which contains 569 tumor samples and 30 numerical predictors describing characteristics of cell nuclei.
-
-The project demonstrates how probability theory underpins statistical inference and guides the modeling process. It emphasizes selecting and applying appropriate generalized linear models, as well as fitting, validating, interpreting, and evaluating those models in a rigorous and systematic way.
-
-The techniques used include multiple regression, multinomial logistic regression, discriminant analysis, regularization methods, and polynomial regression. Together, these approaches illustrate my ability to analyze complex data, compare modeling strategies, and draw meaningful conclusions.
-
-Overall, this work reflects my development as a statistical graduate student, showcasing both my technical proficiency and my ability to apply statistical methods effectively in a real-world context.
-
 ```{r}
-# Data Loading 
+# Data Loading and cleaning
+cancer_data <- read_csv("Breast_cancer_dataset.csv") %>%
+  clean_names() %>%
+  select(-x33) %>%
+  select(-id) %>%
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
 ```
 
+```{r}
+glimpse(cancer_data)
+```
+
+# Exploratory Data Analysis {.tabset}
+## Completeness Check
+
+```{r completeness-checks}
+# Missing values 
+missing_summary <- cancer_data %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "n_missing") %>%
+  filter(n_missing > 0)
+
+if (nrow(missing_summary) == 0) {
+  cat("No missing values detected in any column.\n")
+} else {
+  missing_summary %>%
+    kable(caption = "Variables with Missing Values") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+}
+
+# Duplicate rows
+n_duplicates <- cancer_data %>% duplicated() %>% sum()
+cat("Number of duplicate rows:", n_duplicates, "\n")
+
+```
+
+There were no missing values nor duplicates in the Breast Cancer Dataset
+
+## Summary Statistics
+
+```{r summary-stats}
+cancer_data %>%
+  select(where(is.numeric)) %>%
+  pivot_longer(everything(), names_to = "feature", values_to = "value") %>%
+  group_by(feature) %>%
+  summarise(
+    mean   = round(mean(value), 4),
+    sd     = round(sd(value), 4),
+    median = round(median(value), 4),
+    min    = round(min(value), 4),
+    max    = round(max(value), 4),
+    .groups = "drop"
+  ) %>%
+  kable(caption = "Summary Statistics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = FALSE, font_size = 12) %>%
+  scroll_box(height = "400px")
+```
+
+The vastly different feature scales — where `area_mean` ranges up to 2,500 while `smoothness_mean` sits around 0.09 — require `step_normalize()` to standardize all predictors to mean zero and unit variance, ensuring that no single feature dominates the model due to its scale, which is especially critical for LDA and regularized regression
+
+## Class Distribution
+```{r}
+# Class balance 
+cancer_data %>%
+  count(diagnosis) %>%
+  mutate(proportion = round(n / sum(n), 3)) %>%
+  kable(caption = "Class Distribution of Diagnosis") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r eda-class-bar}
+ggplot(cancer_data, aes(x = diagnosis, fill = diagnosis)) +
+  geom_bar(width = 0.6, show.legend = FALSE) +
+  geom_text(stat = "count", aes(label = after_stat(count)),
+            vjust = -0.5, size = 5, fontface = "bold") +
+  scale_fill_manual(values = c("Benign" = "darkblue", "Malignant" = "darkgrey")) +
+  labs(title = "Distribution of Diagnosis",
+       x = "Diagnosis", y = "Count") +
+  coord_cartesian(ylim = c(0, 400)) +
+  theme_minimal(base_size = 14)
+```
+
+## Feature Distributions by Diagnosis
+
+```{r eda-density-mean, fig.height=10, fig.width=10}
+# Density plots for the 10 "mean" features, colored by diagnosis
+cancer_data %>%
+  select(diagnosis, ends_with("_mean")) %>%
+  pivot_longer(-diagnosis, names_to = "feature", values_to = "value") %>%
+  ggplot(aes(x = value, fill = diagnosis)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ feature, scales = "free", ncol = 3) +
+  scale_fill_manual(values = c("Benign" = "darkblue", "Malignant" = "darkgrey")) +
+  labs(title = "Density Distributions of Mean Features by Diagnosis",
+       x = "Value", y = "Density", fill = "Diagnosis") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "bottom")
+```
+
+## Boxplots of Key Features
+
+```{r eda-boxplots, fig.height=8, fig.width=10}
+# Boxplots for selected high-separation features
+cancer_data %>%
+  select(diagnosis, radius_mean, texture_mean, perimeter_mean,
+         area_mean, concavity_mean, concave_points_mean) %>%
+  pivot_longer(-diagnosis, names_to = "feature", values_to = "value") %>%
+  ggplot(aes(x = diagnosis, y = value, fill = diagnosis)) +
+  geom_boxplot(outlier.alpha = 0.4) +
+  facet_wrap(~ feature, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("Benign" = "darkblue", "Malignant" = "darkgrey")) +
+  labs(title = "Boxplots of Key Features by Diagnosis",
+       x = "Diagnosis", y = "Value") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "none")
+```
+
+## Correlation Matrix
+
+```{r eda-correlation, fig.height=10, fig.width=10}
+cancer_data %>%
+  select(where(is.numeric)) %>%
+  cor() %>%
+  corrplot(method = "color", type = "lower", tl.cex = 0.6,
+           tl.col = "black", addCoef.col = "black", number.cex = 0.4,
+           title = "Correlation Matrix of All Numeric Features",
+           mar = c(0, 0, 2, 0))
+```
+
+## Pairs Plot of Selected Features
+
+```{r eda-pairs, fig.height=8, fig.width=10, message=FALSE}
+cancer_data %>%
+  select(diagnosis, radius_mean, texture_mean, smoothness_mean,
+         compactness_mean, concavity_mean) %>%
+  ggpairs(aes(color = diagnosis, alpha = 0.5),
+          columns = 2:6,
+          upper = list(continuous = wrap("cor", size = 3)),
+          lower = list(continuous = wrap("points", size = 0.8)),
+          diag  = list(continuous = wrap("densityDiag", alpha = 0.5))) +
+  scale_color_manual(values = c("Benign" = "darkblue", "Malignant" = "darkgrey")) +
+  scale_fill_manual(values  = c("Benign" = "darkblue", "Malignant" = "darkgrey")) +
+  labs(title = "Pairs Plot of Mean associated Features") +
+  theme_minimal(base_size = 10)
+```
+
+## EDA Summary
+
+Key findings from the exploratory analysis:
+
+The bar chart reveals a moderate class imbalance in the dataset, with 356 benign cases (62.7%) compared to 212 malignant cases (37.3%). While not severely imbalanced, this ratio justifies the use of stratified sampling in the train/test split to ensure both classes are proportionally represented in the training and testing sets.
+
+The density plots of the ten mean features show that malignant tumors tend to have higher and more spread-out distributions for size-related features, particularly `radius_mean`, `perimeter_mean`, `area_mean`, `concavity_mean`, and `concave_points_mean`, where the benign and malignant curves show strong separation. These features are expected to be powerful predictors in the classification models. In contrast, `smoothness_mean`, `symmetry_mean`, and `fractal_dimension_mean` show substantial overlap between the two groups, suggesting weaker individual discriminatory power.this motivates the use of lasso regression, which shrinks weak predictors to 0 and perform built-in variable selection
+
+The boxplots reinforce the density plot findings. Malignant tumors consistently exhibit higher medians and wider interquartile ranges for `radius_mean`, `perimeter_mean`, `area_mean`, `concavity_mean`, `concave_points_mean`, and `texture_mean`. Several high-value outliers appear in the malignant group for `area_mean` and `perimeter_mean`, indicating that some malignant tumors are significantly larger than the typical case.
+
+The heatmap uncovers strong multicollinearity among size-related features — `radius_mean`, `perimeter_mean`, and `area_mean` are nearly perfectly correlated (r > 0.95), and their `_worst` and `_se` variants follow the same pattern. This motivates the use of `step_corr()` in the preprocessing recipe to remove redundant predictors, as well as regularization techniques like ridge and lasso regression that handle collinearity well.
+
+The pairs plot confirms that `compactness_mean` and `concavity_mean` are very highly correlated (r = 0.883). When stratified by diagnosis, malignant samples cluster distinctly from benign samples in pairings like `radius_mean` vs. `concavity_mean`. Notably, within-group correlations often differ from the overall correlation — for example, `radius_mean` vs. `concavity_mean` has an overall r = 0.676 but only r = 0.080 within benign cases — highlighting the importance of accounting for group structure in modeling.
+
+** — The dataset contains strong predictive signal for distinguishing malignant from benign tumors**
+
+** — Size and concavity features are the most discriminating predictors**
+
+** — The high Multicollinearity among predictors will be addressed through in the preprocessing before modeling and in the model selection**
+
+---
+
+
+# Data Preparation {.tabset}
+## Data Splitting
+
+```{r data-split}
+set.seed(10)
+
+# Stratified 80/20 split to preserve class proportions
+cancer_split <- initial_split(cancer_data, prop = 0.80, strata = diagnosis)
+cancer_train <- training(cancer_split)
+cancer_test  <- testing(cancer_split)
+
+cat("Training set:", nrow(cancer_train), "observations\n")
+cat("Testing set: ", nrow(cancer_test), "observations\n")
+
+# 10-fold cross-validation folds (stratified)
+cancer_folds <- vfold_cv(cancer_train, v = 10, strata = diagnosis)
+```
+
+The data was split in 80/20 proportion resulting to 453 observations for the training set and 115 obseravtions for the test set
+
+## Baseline 
+
+```{r recipe-base}
+# Data preparation for all the base models
+base_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>% 
+  step_corr(all_numeric_predictors(), threshold = 0.9)
+
+base_recipe %>% 
+  prep() %>% 
+  juice() %>% 
+  glimpse()
+```
+The baseline data preprocessing standardized all the numeric predictors to mean zero and unit variance, then removed 11 highly correlated or near-zero variance (those with no variation and are not useful for prediction). This left 19 predictors across 453 training observations. The affcetd variables were from two groups: the size (radius, perimeter, area — measuring the same underlying dimension) and the concavity pair (concavity and concave points — both capturing boundary indentation). Between each correlated pair. The step_corr checked correlations and then retain the one that differs most with all the variables than the other
+
+## Polynomial 
+
+```{r recipe-poly}
+# Data preparation for Logistic Regression with polynomial
+poly_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  step_poly(all_numeric_predictors(), degree = 2)
+
+poly_recipe %>% 
+  prep() %>% 
+  juice() %>% 
+  ncol() %>%
+  cat("Number of features after polynomial expansion:", ., "\n")
+```
+
+
+
+## Interaction 
+
+```{r recipe-interaction}
+# Data preparation for Logistic Regression with an interaction
+interaction_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  step_interact(terms = ~ area_mean:texture_mean + compactness_mean:concave_points_worst)
+```
+
+---
+
+# Logistic Regression {.tabset}
+
+## Full Logistic Regression
+
+### Model Specification 
+
+```{r logistic-spec}
+logistic_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+logistic_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(logistic_spec)
+```
+
+This baseline logistic regression model was fit with 19 variables that were retained from the step_corr. It used the base_recipe earlier formulated in the data preparation step.
+
+### Cross-Validation
+
+```{r logistic-cv}
+logistic_cv <- logistic_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+logistic_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Logistic Regression — Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+10-fold cross validation was implemented for this model which resulted to 96.02% accuarcy, 98% ROC, 97% sensitivity and 95% specificity.
+
+### Coefficients and Odds Ratios
+
+```{r logistic-fit}
+logistic_fit <- logistic_wf %>% fit(data = cancer_train)
+
+logistic_fit %>%
+  tidy() %>%
+  mutate(odds_ratio = exp(estimate)) %>%
+  arrange(desc(abs(estimate))) %>%
+  kable(caption = "Logistic Regression Coefficients and Odds Ratios", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "350px")
+```
+
+This model performed well however it had numerous of the predictors being insignificant which leads to the need to try a reduced model to compare the predicting power.
+
+### Confusion Matrix
+
+```{r logistic-conf}
+logistic_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Logistic Regression — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+The full logistic regression model had 9 benign cases being misclassified as malignant and 9 malignant cases being classified as benign
+
+### ROC Curve
+
+```{r logistic-roc}
+logistic_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Logistic Regression — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+---
+
+## Reduced Logistic Regression
+
+### Identifying Significant Variables
+
+```{r Rededuced variables}
+# Extract significant variables from the full logistic model (p < 0.05)
+sig_vars <- logistic_fit %>%
+  tidy() %>%
+  filter(p.value < 0.05, term != "(Intercept)") %>%
+  pull(term)
+
+cat("Significant variables:\n")
+cat(paste(sig_vars, collapse = "\n"))
+```
+
+### Reduced Logistic Recipe-2nd Iteration without fractal_dimension_worst
+```{r Reduced recipe}
+reduced_recipe <- recipe(diagnosis ~ texture_mean + area_se + concavity_se + 
+                         concave_points_worst,  
+                         data = cancer_train) %>%
+  step_normalize(all_numeric_predictors())
+
+reduced_recipe %>% 
+  prep() %>% 
+  juice() %>% 
+  glimpse()
+
+```
+
+### Reduced Model Specification 
+```{r reduced-spec}
+reduced_logistic_wf <- workflow() %>%
+  add_recipe(reduced_recipe) %>%
+  add_model(logistic_spec)
+```
+
+### Reduced Cross-Validation
+```{r reduced-cv}
+reduced_cv <- reduced_logistic_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+reduced_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Reduced Logistic Regression — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+### Accuracy Comparison between Full Logistic and Reduced Logistic Models
+```{r reduced-accuracy}
+full_acc <- logistic_cv %>%
+  collect_metrics() %>%
+  filter(.metric == "accuracy") %>%
+  pull(mean)
+
+reduced_acc <- reduced_cv %>%
+  collect_metrics() %>%
+  filter(.metric == "accuracy") %>%
+  pull(mean)
+
+cat("Full Model Accuracy (19 predictors):", round(full_acc * 100, 2), "%\n")
+cat("Reduced Model Accuracy (4 predictors):", round(reduced_acc * 100, 2), "%\n")
+```
+
+### Reduced Coefficients and Odds Ratios
+
+```{r reduced-fit}
+reduced_fit <- reduced_logistic_wf %>% fit(data = cancer_train)
+
+reduced_fit %>%
+  tidy() %>%
+  mutate(odds_ratio = exp(estimate)) %>%
+  arrange(desc(abs(estimate))) %>%
+  kable(caption = "Reduced Logistic Regression — Coefficients and Odds Ratios", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+### Reduced Confusion Matrix
+```{r reduced-conf}
+reduced_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Reduced Logistic Regression — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+### Reduced ROC
+
+```{r Reduced_ROC curve}
+reduced_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Reduced Logistic Regression — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+## Logistic Discussion
+
+*Full Logistic Regression Model*
+
+A logistic regression model was fit using all 19 surviving predictors and evaluated via 10-fold cross-validation. Inspection of the coefficient table revealed that only 5 out of 19 predictors were statistically significant (p < 0.05): texture_mean, area_se, concavity_se, concave_points_worst, and fractal_dimension_worst.
+
+*Reduced Model — Iteration 1 (5 Predictors)*
+
+A reduced model was built using only the five significant variables. However, upon refitting, fractal_dimension_worst lost its significance (p = 0.7418), revealing that its original significance in the full model was driven by confounding — it was borrowing predictive power from correlated variables that were no longer present. Additionally, concavity_se flipped its coefficient sign from positive to negative, further evidence of multicollinearity effects in the full model.
+
+*Final Reduced Model — Iteration 2 (4 Predictors)*
+
+After removing fractal_dimension_worst, the final model retained 4 predictors, all statistically significant:
+
+```{r reduced-interpretation-table}
+
+tibble::tribble(
+  ~Variable,                ~`p-value`,   ~`Odds Ratio`, ~Role,                                                              ~`Statistical Interpretation`,
+  "area_se",                "< 0.0001",   "1772.90",     "Higher variability in tumor area strongly predicts malignancy",     "For each 1 SD increase in area variability, the odds of a benign diagnosis increase by a factor of 1772.90, holding all other variables constant. This is the strongest predictor in the model",
+  "concave_points_worst",   "< 0.0001",   "205.50",      "More worst-case boundary indentations indicate malignancy",         "For each 1 SD increase in worst-case concave points, the odds of a benign diagnosis increase by a factor of 205.50, holding all other variables constant",
+  "texture_mean",           "< 0.0001",   "4.10",        "Rougher texture increases malignancy odds ~4x",                     "For each 1 SD increase in mean texture, the odds of a benign diagnosis are about 4.10 times higher, holding all other variables constant",
+  "concavity_se",           "0.0272",     "0.39",        "Higher concavity variability is protective (lowers malignancy odds)","For each 1 SD increase in concavity variability, the odds of a benign diagnosis are multiplied by 0.39 — a 61% decrease. This is the only protective predictor in the model",
+  "(Intercept)",            "0.6871",     "1.17",        "Baseline log-odds when all predictors are at their mean",           "Not statistically significant — when all predictors are at their mean values, the model cannot confidently distinguish between benign and malignant. The intercept is structural and must remain regardless of its p-value"
+) %>%
+  kable(caption = "Reduced Logistic Regression(4Variables) — Interpretations") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+  column_spec(4, width = "20em") %>%
+  column_spec(5, width = "30em")
+
+```
+
+Key Logistic Model Takeaways
+
+— 4 predictors achieved nearly the same performance as 19, yielding a far more interpretable model
+
+— Sequential feature selection matters — variables significant in a full model may lose significance when isolated, exposing confounding and multicollinearity.
+
+— Iterative refitting is essential — one round of reduction was not enough; a second round was needed to remove fractal_dimension_worst after it became non-significant.
+
+— A ROC AUC of 0.99 with 4 variables demonstrates that a small set of biologically meaningful tumor characteristics — size variability, boundary indentation, texture roughness, and concavity consistency — captures nearly all the information needed to distinguish benign from malignant tumors.
+
+---
+
+# Multinomial Logistic Regression {.tabset}
+## Full Multinomial
+### Creating Multinomial Var
+
+```{r multi-engineer}
+# Engineering a multinomial response variable
+cancer_train_multi <- cancer_train %>%
+  mutate(
+    severity = case_when(
+      diagnosis == "Benign" ~ "Low",
+      diagnosis == "Malignant" & radius_worst >= median(radius_worst[diagnosis == "Malignant"]) ~ "High",
+      TRUE ~ "Medium"
+    ),
+    severity = factor(severity, levels = c("Low", "Medium", "High"))
+  )
+
+cancer_test_multi <- cancer_test %>%
+  mutate(
+    severity = case_when(
+      diagnosis == "Benign" ~ "Low",
+      diagnosis == "Malignant" & radius_worst >= median(radius_worst[diagnosis == "Malignant"]) ~ "High",
+      TRUE ~ "Medium"
+    ),
+    severity = factor(severity, levels = c("Low", "Medium", "High"))
+  )
+
+cancer_train_multi %>%
+  count(severity) %>%
+  kable(caption = "Engineered Severity Levels") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+To demonstrate multinomial logistic regression, I created a three-level severity variable: Low (benign tumors), Medium (malignant tumors below median radius_worst), and High (malignant tumors at or above median radius_worst).
+
+### Model Specification and Workflow
+
+```{r multi-spec}
+multi_recipe <- recipe(severity ~ ., data = cancer_train_multi %>% select(-diagnosis)) %>%
+  step_normalize(all_numeric_predictors())
+
+multi_spec <- multinom_reg(penalty = 0.01) %>%
+  set_engine("nnet") %>%
+  set_mode("classification")
+
+multi_wf <- workflow() %>%
+  add_recipe(multi_recipe) %>%
+  add_model(multi_spec)
+```
+
+### Cross-Validation
+```{r multi-cv}
+multi_folds <- vfold_cv(cancer_train_multi %>% select(-diagnosis), v = 10)
+
+multi_cv <- multi_wf %>%
+  fit_resamples(
+    resamples = multi_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+multi_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Multinomial Logistic Regression — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+### Coefficients
+```{r multi-fit}
+# Prep the recipe and bake the training data
+multi_prepped <- multi_recipe %>% prep(training = cancer_train_multi %>% select(-diagnosis))
+multi_baked   <- bake(multi_prepped, new_data = NULL)
+
+# Fit nnet::multinom directly on the baked data so tidy() can access it
+library(nnet)
+multi_direct_fit <- multinom(severity ~ ., data = multi_baked, decay = 0.01, trace = FALSE)
+
+# Now tidy() works because the model has direct access to the data
+broom::tidy(multi_direct_fit) %>%
+  arrange(y.level, desc(abs(estimate))) %>%
+  kable(caption = "Multinomial Logistic Regression — Coefficients by Class", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "400px")
+```
+
+### Confusion Matrix
+```{r multi-conf}
+multi_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = severity, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Multinomial Logistic Regression — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+### ROC Curves
+```{r multi-roc}
+multi_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = severity, .pred_Low, .pred_Medium, .pred_High) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity, color = .level)) +
+  geom_path(linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  scale_color_manual(values = c("Low" = "darkblue", "Medium" = "mediumseagreen", "High" = "orange")) +
+  labs(title = "Multinomial Logistic Regression — ROC Curves (One-vs-All)",
+       color = "Severity Level",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+### Per-Class Performance
+```{r multi-per-class}
+multi_cv %>%
+  collect_predictions() %>%
+  group_by(.pred_class) %>%
+  summarise(
+    n         = n(),
+    correct   = sum(.pred_class == severity),
+    class_acc = round(correct / n * 100, 2)
+  ) %>%
+  rename(`Predicted Class` = .pred_class,
+         `Total Predictions` = n,
+         `Correct` = correct,
+         `Class Accuracy (%)` = class_acc) %>%
+  kable(caption = "Multinomial Logistic Regression — Per-Class Accuracy") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+---
 

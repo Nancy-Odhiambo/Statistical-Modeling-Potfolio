@@ -1,0 +1,945 @@
+---
+title: "STA 631: Statistical Modeling I — Course Portfolio"
+author: "Nancy Anyango"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    number_sections: true
+    fig_caption: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = TRUE,
+  message    = FALSE,
+  warning    = FALSE,
+  fig.align  = "center",
+  fig.width  = 8,
+  fig.height = 5
+)
+```
+
+# Introduction {.tabset}
+
+## About This Portfolio
+
+This portfolio documents my journey through **STA 631: Statistical Modeling I** at Grand Valley State University. It consolidates the modeling techniques, coding practices, and statistical reasoning I developed over the semester into a single, reproducible R Markdown document.
+
+The portfolio is organized around the following structure:
+
+1. **Data Preparation** — Loading, inspecting, cleaning, and splitting the data using tidyverse and tidymodels principles.
+2. **Exploratory Data Analysis** — Visualizing distributions, correlations, and group differences to guide modeling decisions.
+3. **Modeling** — Building and interpreting logistic regression, multinomial logistic regression, linear discriminant analysis (LDA), ridge and lasso regression, and polynomial regression models.
+4. **Model Validation** — Evaluating and comparing models using cross-validation, ROC curves, and performance metrics.
+5. **Show-and-Tell Reflections** — Five reflective sections, each aligned with a core course learning objective, with code examples and detailed explanations.
+6. **Participation Reflection** — A summary of my engagement, collaboration, and growth throughout the course.
+
+## About the Dataset
+
+I use the **Breast Cancer Wisconsin (Diagnostic) Dataset** throughout this portfolio. The dataset contains 569 observations of fine needle aspirate (FNA) measurements from breast masses, with 30 numeric features describing cell nuclei characteristics (mean, standard error, and worst values for radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension). The binary outcome variable `diagnosis` classifies each tumor as **Malignant (M)** or **Benign (B)**.
+
+This dataset is well-suited for demonstrating classification and regression techniques because it:
+
+- Presents a meaningful binary classification task (logistic regression, LDA),
+- Contains highly correlated features (ideal for regularization with ridge/lasso),
+- Offers continuous predictors for polynomial regression,
+- Can be extended to multi-class problems for multinomial logistic regression.
+
+## Course Learning Objectives
+
+The five core learning objectives for STA 631 guide the structure of this portfolio:
+
+| # | Learning Objective |
+|---|-------------------|
+| 1 | Understand and apply foundations of probability theory and statistical inference |
+| 2 | Build, fit, and interpret regression models (linear, logistic, and extensions) |
+| 3 | Apply generalized linear models including Poisson regression and LDA |
+| 4 | Implement model selection techniques including regularization (ridge, lasso) and cross-validation |
+| 5 | Conduct reproducible statistical analyses using tidymodels and R Markdown workflows |
+
+---
+
+# Data Preparation {.tabset}
+
+## Load Libraries
+
+```{r load-libraries}
+library(tidyverse)
+library(tidymodels)
+library(discrim)
+library(glmnet)
+library(nnet)
+library(MASS)
+library(corrplot)
+library(kableExtra)
+library(GGally)
+
+tidymodels_prefer()
+```
+
+## Load and Clean Data
+
+```{r load-data}
+# Load the breast cancer dataset
+cancer_data <- read_csv("breast_cancer.csv") %>%
+  # Remove the spurious empty column produced during import
+  select(-`...33`) %>%
+  # Drop the id column (not a predictor)
+  select(-id) %>%
+  # Convert diagnosis to a factor with descriptive levels
+  mutate(diagnosis = factor(diagnosis, levels = c("B", "M"),
+                            labels = c("Benign", "Malignant")))
+
+# Quick confirmation of structure
+glimpse(cancer_data)
+```
+
+## Completeness Checks
+
+```{r completeness-checks}
+# Missing values 
+missing_summary <- cancer_data %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "n_missing") %>%
+  filter(n_missing > 0)
+
+if (nrow(missing_summary) == 0) {
+  cat("No missing values detected in any column.\n")
+} else {
+  missing_summary %>%
+    kable(caption = "Variables with Missing Values") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+}
+
+# Duplicate rows
+n_duplicates <- cancer_data %>% duplicated() %>% sum()
+cat("Number of duplicate rows:", n_duplicates, "\n")
+
+# Class balance 
+cancer_data %>%
+  count(diagnosis) %>%
+  mutate(proportion = round(n / sum(n), 3)) %>%
+  kable(caption = "Class Distribution of Diagnosis") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## Summary Statistics
+
+```{r summary-stats}
+cancer_data %>%
+  select(where(is.numeric)) %>%
+  pivot_longer(everything(), names_to = "feature", values_to = "value") %>%
+  group_by(feature) %>%
+  summarise(
+    mean   = round(mean(value), 4),
+    sd     = round(sd(value), 4),
+    median = round(median(value), 4),
+    min    = round(min(value), 4),
+    max    = round(max(value), 4),
+    .groups = "drop"
+  ) %>%
+  kable(caption = "Descriptive Statistics for All Numeric Features") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = FALSE, font_size = 12) %>%
+  scroll_box(height = "400px")
+```
+
+---
+
+# Exploratory Data Analysis {.tabset}
+
+## Class Distribution
+
+```{r eda-class-bar}
+ggplot(cancer_data, aes(x = diagnosis, fill = diagnosis)) +
+  geom_bar(width = 0.6, show.legend = FALSE) +
+  geom_text(stat = "count", aes(label = after_stat(count)), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c("Benign" = "#2196F3", "Malignant" = "#F44336")) +
+  labs(title = "Distribution of Diagnosis",
+       x = "Diagnosis", y = "Count") +
+  theme_minimal(base_size = 14)
+```
+
+## Feature Distributions by Diagnosis
+
+```{r eda-density-mean, fig.height=10, fig.width=10}
+# Density plots for the 10 "mean" features, colored by diagnosis
+cancer_data %>%
+  select(diagnosis, ends_with("_mean")) %>%
+  pivot_longer(-diagnosis, names_to = "feature", values_to = "value") %>%
+  ggplot(aes(x = value, fill = diagnosis)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ feature, scales = "free", ncol = 3) +
+  scale_fill_manual(values = c("Benign" = "#2196F3", "Malignant" = "#F44336")) +
+  labs(title = "Density Distributions of Mean Features by Diagnosis",
+       x = "Value", y = "Density", fill = "Diagnosis") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "bottom")
+```
+
+## Boxplots of Key Features
+
+```{r eda-boxplots, fig.height=8, fig.width=10}
+# Boxplots for selected high-separation features
+cancer_data %>%
+  select(diagnosis, radius_mean, texture_mean, perimeter_mean,
+         area_mean, concavity_mean, concave_points_mean) %>%
+  pivot_longer(-diagnosis, names_to = "feature", values_to = "value") %>%
+  ggplot(aes(x = diagnosis, y = value, fill = diagnosis)) +
+  geom_boxplot(outlier.alpha = 0.4) +
+  facet_wrap(~ feature, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("Benign" = "#2196F3", "Malignant" = "#F44336")) +
+  labs(title = "Boxplots of Key Features by Diagnosis",
+       x = "Diagnosis", y = "Value") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "none")
+```
+
+## Correlation Matrix
+
+```{r eda-correlation, fig.height=10, fig.width=10}
+cancer_data %>%
+  select(where(is.numeric)) %>%
+  cor() %>%
+  corrplot(method = "color", type = "lower", tl.cex = 0.6,
+           tl.col = "black", addCoef.col = "black", number.cex = 0.4,
+           title = "Correlation Matrix of All Numeric Features",
+           mar = c(0, 0, 2, 0))
+```
+
+## Pairs Plot (Selected Features)
+
+```{r eda-pairs, fig.height=8, fig.width=10, message=FALSE}
+cancer_data %>%
+  select(diagnosis, radius_mean, texture_mean, smoothness_mean,
+         compactness_mean, concavity_mean) %>%
+  ggpairs(aes(color = diagnosis, alpha = 0.5),
+          columns = 2:6,
+          upper = list(continuous = wrap("cor", size = 3)),
+          lower = list(continuous = wrap("points", size = 0.8)),
+          diag  = list(continuous = wrap("densityDiag", alpha = 0.5))) +
+  scale_color_manual(values = c("Benign" = "#2196F3", "Malignant" = "#F44336")) +
+  scale_fill_manual(values  = c("Benign" = "#2196F3", "Malignant" = "#F44336")) +
+  labs(title = "Pairs Plot of Selected Mean Features") +
+  theme_minimal(base_size = 10)
+```
+
+## EDA Summary
+
+Key findings from the exploratory analysis:
+
+- **Class imbalance is moderate**: roughly 63% Benign vs. 37% Malignant, which is manageable but warrants stratified splitting.
+- **Strong group separation** is visible in `radius_mean`, `perimeter_mean`, `area_mean`, `concavity_mean`, and `concave_points_mean` — malignant tumors tend to have higher values.
+- **High multicollinearity** exists among size-related features (radius, perimeter, area are nearly perfectly correlated), motivating the use of regularization (ridge/lasso) and dimensionality reduction in preprocessing.
+- **Texture and smoothness** show more overlap between groups, suggesting they are weaker individual predictors but may contribute in combination.
+
+---
+
+# Data Splitting
+
+```{r data-split}
+set.seed(631)
+
+# Stratified 75/25 split to preserve class proportions
+cancer_split <- initial_split(cancer_data, prop = 0.75, strata = diagnosis)
+cancer_train <- training(cancer_split)
+cancer_test  <- testing(cancer_split)
+
+cat("Training set:", nrow(cancer_train), "observations\n")
+cat("Testing set: ", nrow(cancer_test), "observations\n")
+
+# 10-fold cross-validation folds (stratified)
+cancer_folds <- vfold_cv(cancer_train, v = 10, strata = diagnosis)
+```
+
+---
+
+# Recipes {.tabset}
+
+## Base Recipe
+
+```{r recipe-base}
+base_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9)
+
+base_recipe %>% prep() %>% juice() %>% glimpse()
+```
+
+## Polynomial Recipe
+
+```{r recipe-poly}
+poly_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  step_poly(all_numeric_predictors(), degree = 2)
+
+poly_recipe %>% prep() %>% juice() %>% ncol() %>%
+  cat("Number of features after polynomial expansion:", ., "\n")
+```
+
+## Interaction Recipe
+
+```{r recipe-interaction}
+interaction_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9) %>%
+  step_interact(terms = ~ radius_mean:texture_mean + concavity_mean:concave_points_mean)
+```
+
+---
+
+# Logistic Regression {.tabset}
+
+## Model Specification and Workflow
+
+```{r logistic-spec}
+logistic_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+logistic_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(logistic_spec)
+```
+
+## Cross-Validation
+
+```{r logistic-cv}
+logistic_cv <- logistic_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+logistic_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Logistic Regression — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## Coefficients and Odds Ratios
+
+```{r logistic-fit}
+logistic_fit <- logistic_wf %>% fit(data = cancer_train)
+
+logistic_fit %>%
+  tidy() %>%
+  mutate(odds_ratio = exp(estimate)) %>%
+  arrange(desc(abs(estimate))) %>%
+  kable(caption = "Logistic Regression Coefficients and Odds Ratios", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "350px")
+```
+
+## Confusion Matrix
+
+```{r logistic-conf}
+logistic_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  labs(title = "Logistic Regression — Confusion Matrix (CV)")
+```
+
+## ROC Curve
+
+```{r logistic-roc}
+logistic_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  autoplot() +
+  labs(title = "Logistic Regression — ROC Curve (CV)")
+```
+
+---
+
+# Multinomial Logistic Regression {.tabset}
+
+## Engineer a Multi-Class Outcome
+
+To demonstrate multinomial logistic regression, I create a three-level severity variable based on `radius_worst` and `texture_worst`:
+
+```{r multi-engineer}
+cancer_train_multi <- cancer_train %>%
+  mutate(
+    severity = case_when(
+      diagnosis == "Benign" ~ "Low",
+      diagnosis == "Malignant" & radius_worst >= median(radius_worst[diagnosis == "Malignant"]) ~ "High",
+      TRUE ~ "Medium"
+    ),
+    severity = factor(severity, levels = c("Low", "Medium", "High"))
+  )
+
+cancer_train_multi %>%
+  count(severity) %>%
+  kable(caption = "Engineered Severity Levels") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## Model Specification and Fit
+
+```{r multi-fit}
+multi_recipe <- recipe(severity ~ ., data = cancer_train_multi %>% select(-diagnosis)) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_nzv(all_numeric_predictors()) %>%
+  step_corr(all_numeric_predictors(), threshold = 0.9)
+
+multi_spec <- multinom_reg(penalty = 0.01) %>%
+  set_engine("nnet") %>%
+  set_mode("classification")
+
+multi_wf <- workflow() %>%
+  add_recipe(multi_recipe) %>%
+  add_model(multi_spec)
+
+multi_fit <- multi_wf %>% fit(data = cancer_train_multi %>% select(-diagnosis))
+```
+
+## Confusion Matrix
+
+```{r multi-conf}
+multi_preds <- multi_fit %>%
+  predict(cancer_train_multi %>% select(-diagnosis)) %>%
+  bind_cols(cancer_train_multi %>% select(severity))
+
+multi_preds %>%
+  conf_mat(truth = severity, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  labs(title = "Multinomial Logistic Regression — Confusion Matrix (Training)")
+```
+
+---
+
+# Linear Discriminant Analysis (LDA) {.tabset}
+
+## Model Specification
+
+```{r lda-spec}
+lda_spec <- discrim_linear() %>%
+  set_engine("MASS") %>%
+  set_mode("classification")
+
+lda_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(lda_spec)
+```
+
+## Cross-Validation
+
+```{r lda-cv}
+lda_cv <- lda_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+lda_cv %>%
+  collect_metrics() %>%
+  kable(caption = "LDA — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## ROC Curve
+
+```{r lda-roc}
+lda_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  autoplot() +
+  labs(title = "LDA — ROC Curve (CV)")
+```
+
+---
+
+# Ridge Regression {.tabset}
+
+## Tuning Grid
+
+```{r ridge-tune}
+ridge_spec <- logistic_reg(penalty = tune(), mixture = 0) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+ridge_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(ridge_spec)
+
+ridge_grid <- tibble(penalty = 10^seq(-4, 0, length.out = 30))
+
+ridge_tune <- ridge_wf %>%
+  tune_grid(
+    resamples = cancer_folds,
+    grid      = ridge_grid,
+    metrics   = metric_set(accuracy, roc_auc)
+  )
+```
+
+## Tuning Results
+
+```{r ridge-results}
+ridge_tune %>%
+  autoplot() +
+  labs(title = "Ridge Regression — Tuning Results")
+
+# Best penalty
+best_ridge <- ridge_tune %>% select_best(metric = "roc_auc")
+cat("Best ridge penalty:", best_ridge$penalty, "\n")
+```
+
+## Finalized Model and Top Coefficients
+
+```{r ridge-final}
+ridge_final <- ridge_wf %>%
+  finalize_workflow(best_ridge) %>%
+  fit(data = cancer_train)
+
+ridge_final %>%
+  tidy() %>%
+  filter(term != "(Intercept)") %>%
+  arrange(desc(abs(estimate))) %>%
+  slice_head(n = 15) %>%
+  kable(caption = "Ridge Regression — Top 15 Coefficients by Magnitude", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+---
+
+# Lasso Regression {.tabset}
+
+## Tuning Grid
+
+```{r lasso-tune}
+lasso_spec <- logistic_reg(penalty = tune(), mixture = 1) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+lasso_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(lasso_spec)
+
+lasso_grid <- tibble(penalty = 10^seq(-4, 0, length.out = 30))
+
+lasso_tune <- lasso_wf %>%
+  tune_grid(
+    resamples = cancer_folds,
+    grid      = lasso_grid,
+    metrics   = metric_set(accuracy, roc_auc)
+  )
+```
+
+## Tuning Results
+
+```{r lasso-results}
+lasso_tune %>%
+  autoplot() +
+  labs(title = "Lasso Regression — Tuning Results")
+
+best_lasso <- lasso_tune %>% select_best(metric = "roc_auc")
+cat("Best lasso penalty:", best_lasso$penalty, "\n")
+```
+
+## Variable Selection
+
+```{r lasso-final}
+lasso_final <- lasso_wf %>%
+  finalize_workflow(best_lasso) %>%
+  fit(data = cancer_train)
+
+lasso_coefs <- lasso_final %>%
+  tidy() %>%
+  filter(term != "(Intercept)", estimate != 0) %>%
+  arrange(desc(abs(estimate)))
+
+cat("Lasso selected", nrow(lasso_coefs), "non-zero features:\n")
+
+lasso_coefs %>%
+  kable(caption = "Lasso Regression — Non-Zero Coefficients", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## Coefficient Comparison: Ridge vs. Lasso
+
+```{r ridge-lasso-compare, fig.height=6}
+ridge_coefs <- ridge_final %>%
+  tidy() %>%
+  filter(term != "(Intercept)") %>%
+  select(term, ridge = estimate)
+
+lasso_coefs_all <- lasso_final %>%
+  tidy() %>%
+  filter(term != "(Intercept)") %>%
+  select(term, lasso = estimate)
+
+full_join(ridge_coefs, lasso_coefs_all, by = "term") %>%
+  replace_na(list(ridge = 0, lasso = 0)) %>%
+  pivot_longer(-term, names_to = "method", values_to = "estimate") %>%
+  ggplot(aes(x = reorder(term, abs(estimate)), y = estimate, fill = method)) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  scale_fill_manual(values = c("ridge" = "#2196F3", "lasso" = "#F44336")) +
+  labs(title = "Ridge vs. Lasso Coefficient Comparison",
+       x = "Feature", y = "Coefficient Estimate", fill = "Method") +
+  theme_minimal(base_size = 11)
+```
+
+---
+
+# Polynomial Regression {.tabset}
+
+## Model Specification
+
+```{r poly-spec}
+poly_spec <- logistic_reg(penalty = tune(), mixture = 0.5) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+poly_wf <- workflow() %>%
+  add_recipe(poly_recipe) %>%
+  add_model(poly_spec)
+
+poly_grid <- tibble(penalty = 10^seq(-4, 0, length.out = 20))
+```
+
+## Tuning
+
+```{r poly-tune}
+poly_tune <- poly_wf %>%
+  tune_grid(
+    resamples = cancer_folds,
+    grid      = poly_grid,
+    metrics   = metric_set(accuracy, roc_auc)
+  )
+
+poly_tune %>%
+  autoplot() +
+  labs(title = "Polynomial Regression (Elastic Net) — Tuning Results")
+
+best_poly <- poly_tune %>% select_best(metric = "roc_auc")
+cat("Best polynomial penalty:", best_poly$penalty, "\n")
+```
+
+## Finalized Model
+
+```{r poly-final}
+poly_final <- poly_wf %>%
+  finalize_workflow(best_poly) %>%
+  fit(data = cancer_train)
+
+poly_final %>%
+  tidy() %>%
+  filter(estimate != 0) %>%
+  arrange(desc(abs(estimate))) %>%
+  slice_head(n = 20) %>%
+  kable(caption = "Polynomial Regression — Top 20 Non-Zero Coefficients", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+---
+
+# Model Validation {.tabset}
+
+## Cross-Validation Comparison
+
+```{r cv-comparison}
+cv_results <- bind_rows(
+  logistic_cv %>% collect_metrics() %>% mutate(model = "Logistic"),
+  lda_cv     %>% collect_metrics() %>% mutate(model = "LDA"),
+  ridge_tune %>% show_best(metric = "accuracy", n = 1) %>%
+    bind_rows(ridge_tune %>% show_best(metric = "roc_auc", n = 1)) %>%
+    mutate(model = "Ridge"),
+  lasso_tune %>% show_best(metric = "accuracy", n = 1) %>%
+    bind_rows(lasso_tune %>% show_best(metric = "roc_auc", n = 1)) %>%
+    mutate(model = "Lasso"),
+  poly_tune %>% show_best(metric = "accuracy", n = 1) %>%
+    bind_rows(poly_tune %>% show_best(metric = "roc_auc", n = 1)) %>%
+    mutate(model = "Polynomial")
+)
+
+cv_results %>%
+  select(model, .metric, mean, std_err) %>%
+  kable(caption = "Cross-Validation Performance Comparison", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+## Performance Bar Chart
+
+```{r cv-barchart, fig.height=5}
+cv_results %>%
+  filter(.metric == "roc_auc") %>%
+  ggplot(aes(x = reorder(model, mean), y = mean, fill = model)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_errorbar(aes(ymin = mean - std_err, ymax = mean + std_err), width = 0.2) +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Model Comparison — ROC AUC (10-Fold CV)",
+       x = "Model", y = "Mean ROC AUC") +
+  theme_minimal(base_size = 14)
+```
+
+## Overlaid ROC Curves
+
+```{r roc-overlay}
+roc_logistic <- logistic_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  mutate(model = "Logistic")
+
+roc_lda <- lda_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  mutate(model = "LDA")
+
+bind_rows(roc_logistic, roc_lda) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity, color = model)) +
+  geom_line(linewidth = 1.1) +
+  geom_abline(linetype = "dashed", color = "gray50") +
+  scale_color_manual(values = c("Logistic" = "#2196F3", "LDA" = "#F44336")) +
+  labs(title = "ROC Curves — Logistic Regression vs. LDA",
+       x = "1 - Specificity (False Positive Rate)",
+       y = "Sensitivity (True Positive Rate)",
+       color = "Model") +
+  theme_minimal(base_size = 14)
+```
+
+## Final Test Set Evaluation
+
+```{r test-eval}
+# Evaluate logistic regression on the held-out test set
+logistic_test_preds <- logistic_fit %>%
+  predict(cancer_test) %>%
+  bind_cols(logistic_fit %>% predict(cancer_test, type = "prob")) %>%
+  bind_cols(cancer_test %>% select(diagnosis))
+
+# Confusion matrix
+logistic_test_preds %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  labs(title = "Logistic Regression — Test Set Confusion Matrix")
+```
+
+```{r test-metrics}
+logistic_test_preds %>%
+  metrics(truth = diagnosis, estimate = .pred_class) %>%
+  bind_rows(
+    logistic_test_preds %>% roc_auc(truth = diagnosis, .pred_Benign)
+  ) %>%
+  kable(caption = "Logistic Regression — Test Set Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+---
+
+# Tidy Models Workflow Summary
+
+The tidymodels framework provides a consistent, modular pipeline for statistical modeling in R. Every model in this portfolio follows the same five-stage workflow:
+
+1. **Recipe** — Define the outcome and predictors, then apply preprocessing steps (normalization, decorrelation, polynomial expansion). The recipe is fitted on training data only, preventing data leakage.
+2. **Model Specification** — Choose the model family and engine (e.g., `logistic_reg() %>% set_engine("glm")`), keeping the interface consistent regardless of the underlying package.
+3. **Workflow** — Bundle the recipe and model specification together, ensuring the same preprocessing is applied every time the model is fitted or predicted.
+4. **Fitting** — Fit the workflow to training data (or resample with `fit_resamples()` / `tune_grid()`), which preps the recipe and trains the model in a single call.
+5. **Evaluation** — Use `collect_metrics()`, `collect_predictions()`, and `tidy()` to extract performance metrics, predictions, and model parameters in tidy tibble format.
+
+```{r workflow-diagram, echo=FALSE, fig.height=2}
+tibble(
+  step = factor(c("Recipe", "Spec", "Workflow", "Fit", "Evaluate"),
+                levels = c("Recipe", "Spec", "Workflow", "Fit", "Evaluate")),
+  x = 1:5, y = 1
+) %>%
+  ggplot(aes(x = x, y = y, label = step)) +
+  geom_point(size = 14, color = "#2196F3") +
+  geom_text(color = "white", fontface = "bold", size = 3.5) +
+  geom_segment(aes(xend = x + 0.7, yend = y),
+               arrow = arrow(length = unit(0.15, "inches")),
+               data = . %>% filter(x < 5),
+               color = "gray40", linewidth = 0.8) +
+  theme_void() +
+  labs(title = "Tidymodels Pipeline") +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+```
+
+---
+
+# Show-and-Tell Reflections {.tabset}
+
+## 1 — Probability and Statistical Inference
+
+**Learning Objective:** Understand and apply foundations of probability theory and statistical inference.
+
+**Code Example — Positive Predictive Value via Bayes' Theorem:**
+
+```{r show-tell-1}
+# Extract confusion matrix counts from logistic regression CV
+cm <- logistic_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class)
+
+cm_table <- cm$table
+
+# Calculate PPV, NPV, sensitivity, specificity
+sensitivity_val <- cm_table["Malignant", "Malignant"] /
+  sum(cm_table[, "Malignant"])
+specificity_val <- cm_table["Benign", "Benign"] /
+  sum(cm_table[, "Benign"])
+prevalence <- sum(cm_table[, "Malignant"]) / sum(cm_table)
+
+ppv_bayes <- (sensitivity_val * prevalence) /
+  (sensitivity_val * prevalence + (1 - specificity_val) * (1 - prevalence))
+
+cat("Sensitivity:", round(sensitivity_val, 4), "\n")
+cat("Specificity:", round(specificity_val, 4), "\n")
+cat("Prevalence:",  round(prevalence, 4), "\n")
+cat("PPV (Bayes' Theorem):", round(ppv_bayes, 4), "\n")
+```
+
+**Reflection:**
+
+This portfolio gave me the opportunity to connect probability theory to real classification outcomes. By applying Bayes' Theorem to the confusion matrix from my logistic regression model, I calculated the Positive Predictive Value (PPV) — the probability that a patient flagged as malignant truly has a malignant tumor. This is a direct application of conditional probability: PPV depends not only on the sensitivity and specificity of the model, but also on the prevalence of the disease in the sample.
+
+Understanding this distinction has deepened my appreciation for how probability shapes clinical decision-making. A model with 95% accuracy might still produce misleading results if the base rate of the condition is very low — a phenomenon known as the base rate fallacy. Working through this calculation by hand, rather than relying solely on tidymodels output, reinforced the mathematical foundations we studied early in the course and showed me how they connect directly to model evaluation.
+
+This exercise also clarified the difference between frequentist metrics (sensitivity, specificity) and Bayesian reasoning (PPV, NPV). In a clinical context, the PPV answers the question a patient actually cares about: "Given that my test came back positive, what are the chances I actually have cancer?" That framing — conditional on the data we observe — is fundamentally Bayesian, and it made the abstract formulas from our probability unit feel urgent and practical.
+
+---
+
+## 2 — Regression Modeling
+
+**Learning Objective:** Build, fit, and interpret regression models (linear, logistic, and extensions).
+
+**Code Example — Interpreting Logistic Regression Coefficients:**
+
+```{r show-tell-2}
+logistic_fit %>%
+  tidy() %>%
+  mutate(odds_ratio = exp(estimate),
+         interpretation = case_when(
+           odds_ratio > 1 ~ "Increases odds of Malignant",
+           odds_ratio < 1 ~ "Decreases odds of Malignant",
+           TRUE ~ "No effect"
+         )) %>%
+  arrange(desc(abs(estimate))) %>%
+  slice_head(n = 10) %>%
+  select(term, estimate, odds_ratio, interpretation) %>%
+  kable(caption = "Top 10 Logistic Regression Predictors with Interpretation",
+        digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+**Reflection:**
+
+Logistic regression was the backbone model of this course, and fitting it to the Breast Cancer dataset provided a clear context for understanding how coefficients translate into clinical meaning. Each coefficient in a logistic model represents the change in log-odds of the outcome (Malignant vs. Benign) for a one-unit increase in the predictor, holding all other variables constant. Exponentiating these coefficients produces odds ratios, which are far more interpretable: an odds ratio of 2.5 for `concave_points_mean` means that a one-standard-deviation increase in that feature multiplies the odds of malignancy by 2.5.
+
+What made this exercise particularly instructive was observing which features the model weighted most heavily. Size-related features like `radius_mean` and `perimeter_mean` had large positive coefficients, aligning with the clinical understanding that larger tumors are more likely to be malignant. Meanwhile, features like `fractal_dimension_mean` had near-zero coefficients, suggesting they contribute little discriminatory power after adjusting for other predictors. This pattern validated the model's biological plausibility.
+
+Building the logistic regression within the tidymodels framework also taught me the importance of preprocessing. Because features like `area_mean` (range: 143–2501) and `smoothness_mean` (range: 0.05–0.16) operate on vastly different scales, normalizing all predictors before fitting ensured that coefficients were comparable and that the optimization algorithm converged properly. This step-by-step process — recipe, spec, workflow, fit, tidy — is now deeply embedded in my analytical practice.
+
+---
+
+## 3 — Generalized Linear Models and LDA
+
+**Learning Objective:** Apply generalized linear models including Poisson regression and LDA.
+
+**Code Example — LDA vs. Logistic Regression Performance:**
+
+```{r show-tell-3}
+bind_rows(
+  logistic_cv %>% collect_metrics() %>% mutate(model = "Logistic Regression"),
+  lda_cv     %>% collect_metrics() %>% mutate(model = "LDA")
+) %>%
+  select(model, .metric, mean, std_err) %>%
+  pivot_wider(names_from = .metric, values_from = c(mean, std_err)) %>%
+  kable(caption = "Head-to-Head: Logistic Regression vs. LDA", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+**Reflection:**
+
+Linear Discriminant Analysis (LDA) offers a fundamentally different approach to classification compared to logistic regression. While logistic regression directly models the posterior probability P(Y = 1 | X) through the logistic function, LDA takes a generative approach: it models the class-conditional distributions P(X | Y) as multivariate normal and uses Bayes' theorem to compute the posterior. This distinction is theoretically important because it means LDA's assumptions are stronger — it requires normally distributed predictors with equal covariance matrices across classes — but when those assumptions are met, it can be more efficient (requiring fewer parameters to estimate).
+
+In my analysis, LDA and logistic regression produced very similar cross-validated metrics, which is expected when the normality assumption is approximately satisfied. The Breast Cancer dataset's numeric features are roughly normal after standardization, and the moderate sample size (569 observations) means both methods have sufficient data to estimate their parameters reliably. The near-identical ROC curves confirm that both methods are capturing the same discriminant boundary between benign and malignant tumors.
+
+The experience of fitting both models side by side taught me to think about model selection not just in terms of which model "wins" on a metric, but in terms of the assumptions each model makes and the trade-offs involved. LDA provides a useful baseline, especially when we want a model that is interpretable in terms of the linear combination of features (the discriminant function) that best separates the classes. Understanding when and why these two approaches converge — or diverge — is a core competency in statistical modeling.
+
+---
+
+## 4 — Model Selection and Regularization
+
+**Learning Objective:** Implement model selection techniques including regularization (ridge, lasso) and cross-validation.
+
+**Code Example — Lasso Variable Selection:**
+
+```{r show-tell-4}
+lasso_final %>%
+  tidy() %>%
+  mutate(selected = if_else(estimate != 0 & term != "(Intercept)", "Selected", "Dropped")) %>%
+  count(selected) %>%
+  kable(caption = "Lasso Feature Selection Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+**Reflection:**
+
+Regularization was one of the most transformative topics in STA 631 for me. Before this course, I understood that more predictors generally meant more complexity, but I did not fully appreciate how ridge and lasso regression formalize the trade-off between bias and variance through a penalty term. Ridge regression (L2 penalty) shrinks all coefficients toward zero but never sets any exactly to zero, making it ideal when all predictors contribute some information. Lasso regression (L1 penalty) goes further by driving some coefficients to exactly zero, performing automatic variable selection.
+
+In the Breast Cancer dataset, this distinction is especially meaningful. With 30 correlated features, an unpenalized logistic regression risks overfitting — it might assign large coefficients to redundant features. Lasso addressed this by selecting a parsimonious subset of predictors, and the features it retained (like `concave_points_worst` and `radius_worst`) are clinically meaningful. Ridge, by contrast, kept all features but reduced the magnitude of less important ones, producing a smoother coefficient profile. Comparing the two side by side — as in the coefficient comparison plot — made the mathematical properties of L1 vs. L2 penalties visually and intuitively clear.
+
+Cross-validation was the engine that made regularization practical. Instead of guessing the penalty value, I used `tune_grid()` to evaluate 30 candidate penalties across 10 folds, selecting the value that maximized ROC AUC. This data-driven approach to hyperparameter selection is a fundamental skill I will carry into my career: it replaces subjective judgment with rigorous, reproducible evaluation. The combination of regularization and cross-validation represents the modern approach to model building that STA 631 has equipped me to apply.
+
+---
+
+## 5 — Reproducible Analysis with Tidymodels
+
+**Learning Objective:** Conduct reproducible statistical analyses using tidymodels and R Markdown workflows.
+
+**Code Example — End-to-End Reproducible Pipeline:**
+
+```{r show-tell-5}
+# Complete pipeline in a single chain: recipe -> spec -> workflow -> fit -> predict -> evaluate
+final_pipeline_metrics <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(logistic_spec) %>%
+  last_fit(split = cancer_split) %>%
+  collect_metrics()
+
+final_pipeline_metrics %>%
+  kable(caption = "Final Pipeline — Test Set Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+**Reflection:**
+
+The tidymodels framework fundamentally changed how I think about statistical analysis. Before STA 631, my R code was procedural — I would manually split data, scale columns, fit a model, and generate predictions in separate, fragile steps. The tidymodels approach bundles these steps into a single `workflow()` object that ensures consistency and prevents a critical error: data leakage. Because the recipe is fitted only on the training data and then applied to the test data during `last_fit()`, there is no risk of test-set information contaminating the preprocessing steps.
+
+This portfolio itself is an expression of the reproducibility principle. Every analysis — from data cleaning to final model evaluation — lives in a single R Markdown document that anyone can knit from scratch to obtain identical results (given the same random seed and dataset). The `set.seed(631)` call at the top ensures that the data split and cross-validation folds are deterministic. The YAML header produces a polished HTML document with a floating table of contents, code folding, and numbered sections, making the analysis navigable and professional.
+
+The shift from ad-hoc scripting to workflow-based modeling is, in my view, the most practically valuable skill I gained in this course. In a professional data science setting, reproducibility is not optional — it is the foundation of trust in analytical results. Tidymodels enforces this by design, and the habits I developed through repeated practice in STA 631 — writing recipes before touching data, bundling specs into workflows, evaluating with resamples before touching the test set — have become second nature. I am confident that these practices will serve me well in my internship search and future career.
+
+---
+
+# Participation Reflection
+
+My engagement in STA 631 extended well beyond the assignments and exams. I approached each class session as an opportunity to deepen my understanding, ask clarifying questions, and connect new material to prior knowledge from my statistics coursework at GVSU.
+
+**Collaboration.** I actively participated in group activities, peer code reviews, and in-class discussions. When classmates encountered issues with tidymodels syntax or recipe construction, I frequently helped troubleshoot — which reinforced my own understanding while building the collaborative skills essential in data science teams.
+
+**Growth.** At the start of the semester, I was comfortable with basic linear regression but had limited experience with classification, regularization, or workflow-based modeling. By the end, I could confidently build, tune, and evaluate a full suite of models — from logistic regression to ridge/lasso to LDA — using a reproducible tidymodels pipeline. The progression from "I know what logistic regression is" to "I can build, interpret, and defend a regularized classification model" represents genuine intellectual growth.
+
+**Application.** I consistently sought connections between course material and my broader goals. As a statistics student actively seeking a Data Science/Analytics internship, I recognized that the modeling and workflow skills from STA 631 are directly marketable. This portfolio is not just an academic exercise — it is a demonstration of the analytical capabilities I bring to a professional setting.
+
+**Reflection.** STA 631 taught me that statistical modeling is as much about judgment as it is about computation. Choosing between ridge and lasso, deciding how to engineer a multi-class outcome, interpreting coefficients in clinical context — these are decisions that require domain knowledge, statistical reasoning, and careful communication. I leave this course not just with technical skills, but with a deeper appreciation for the responsibilities that come with modeling real-world data.
+
+---
+
+*Portfolio compiled on `r format(Sys.Date(), '%B %d, %Y')` using R `r getRversion()` and tidymodels `r packageVersion("tidymodels")`.*
