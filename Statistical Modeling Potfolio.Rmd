@@ -14,6 +14,10 @@ output:
     fig_caption: true
 ---
 
+```{r Setup Plots, Include=FALSE}
+knitr::opts_chunk$set(fig.path = "/tmp/portfolio_plots/")
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo       = TRUE,
@@ -26,9 +30,12 @@ knitr::opts_chunk$set(
 ```
 
 ```{css, echo=FALSE}
+/* Gray Site Background */
 body {
-  background-color: #eef2f7;
+  background-color: #d3d3d3;
 }
+
+/* Full-Width Container */
 .main-container {
   max-width: 100% !important;
   width: 100% !important;
@@ -38,60 +45,214 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
 .container-fluid {
   max-width: 100% !important;
   width: 100% !important;
   padding-left: 50px !important;
   padding-right: 50px !important;
 }
+
+/* Title & Author Dark Blue Ribbon */
 .title {
-  font-size: 3.5em;
+  background: linear-gradient(135deg, #00008B, #1a3a7a);
+  color: #ffffff !important;
+  font-size: 2.8em;
   font-weight: bold;
   text-align: center;
+  padding: 20px 30px;
+  margin: -30px -50px 0 -50px;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  letter-spacing: 1px;
 }
+
 .author {
+  background: linear-gradient(135deg, #1a3a7a, #00008B);
+  color: #ffffff !important;
+  font-size: 1.3em;
+  font-weight: bold;
   text-align: center;
+  padding: 12px 30px;
+  margin: 0 -50px 25px -50px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  letter-spacing: 1.5px;
+}
+
+/* Tabset Headings */
+.tabset > h1,
+.tabset > h2,
+h1.tabset,
+h1:has(+ .tab-content),
+.section.level1 > h1 {
+  font-weight: bold !important;
+  color: #00008B !important;
+}
+
+/* Tab Buttons */
+.nav-tabs > li > a {
+  font-weight: bold !important;
+  color: #00008B !important;
+}
+
+/* Active Tab */
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+  background-color: #00008B !important;
+  color: #ffffff !important;
+  border-color: #00008B !important;
+}
+
+/* Hover State */
+.nav-tabs > li > a:hover {
+  background-color: #1a3a7a !important;
+  color: #ffffff !important;
+  border-color: #1a3a7a !important;
+}
+
+/* Dark Grey Background for Code Outputs Only */
+pre:not(.r) {
+  background-color: #a9a9a9 !important;
+  color: #ffffff !important;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+/* Objectives Ribbon */
+.objectives-ribbon {
+  background: linear-gradient(135deg, #00008B, #1a3a7a);
+  color: #ffffff;
+  font-size: 1.2em;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 25px;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+/* Individual Objective Items */
+.objective-item {
+  background-color: #f0f4ff;
+  border-left: 4px solid #00008B;
+  padding: 10px 15px;
+  margin: 8px 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.95em;
+}
+
+.objective-item strong {
+  color: #00008B;
+}
+
+/* Objective Explanation Box */
+.objective-explanation {
+  background-color: #fafcff;
+  border: 1px solid #d0d8e8;
+  padding: 15px 20px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  border-radius: 6px;
+  font-size: 0.95em;
+  line-height: 1.6;
 }
 ```
 
+# Portfolio Objectives {.tabset}
+
+<div class="objectives-ribbon"> Portfolio Objectives</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation.  
+Demonstrated in:  
+<a href="#logistic-regression">Full Logistic Regression</a>,  
+<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
+<a href="#logistic-discussion">Logistic Discussion</a>,  
+<a href="#model-validation">ROC Curves & Cross‑Validation</a>
+</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context.  
+Demonstrated in:  
+<a href="#logistic-regression">Logistic Regression</a>,  
+<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
+<a href="#multinomial-logistic-regression">Multinomial Logistic Regression</a>,  
+<a href="#lda-model">LDA Model</a>,  
+<a href="#polynomial-regression">Polynomial Logistic Regression</a>,  
+<a href="#interaction-model">Interaction Logistic Regression</a>
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models.  
+Demonstrated in:  
+<a href="#reduced-logistic-regression">Full vs Reduced Logistic Regression</a>,  
+<a href="#lasso-regression">Lasso Regression</a>,  
+<a href="#ridge-regression">Ridge Regression</a>,  
+<a href="#polynomial-regression">Polynomial Regression</a>,  
+<a href="#interaction-model">Interaction Model</a>,  
+<a href="#model-validation">Cross‑Validation Comparisons</a>
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience.  
+Demonstrated in:  
+<a href="#logistic-discussion">Logistic Discussion</a>,  
+<a href="#eda-summary">EDA Summary</a>,  
+<a href="#interpretation-tables">Interpretation Tables</a>,  
+<a href="#reduced-logistic-regression">Reduced Logistic Regression Interpretation</a>
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models.  
+Demonstrated in:  
+<a href="#data-preparation">Data Preparation</a>,  
+<a href="#logistic-regression">Logistic Regression</a>,  
+<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
+<a href="#lasso-regression">Lasso Regression</a>,  
+<a href="#ridge-regression">Ridge Regression</a>,  
+<a href="#lda-model">LDA Model</a>,  
+<a href="#polynomial-regression">Polynomial Regression</a>,  
+<a href="#interaction-model">Interaction Model</a>,  
+<a href="#model-validation">Cross‑Validation & ROC Curves</a>
+</div>
+
+<div class="objective explanation">
+This section outlines the five core learning objectives for Statistical Modeling I.  
+Each objective is demonstrated through applied modeling, interpretation, and reflection throughout this portfolio.  
+The models, workflows, and analyses included in later sections collectively show my growth in statistical reasoning, programming proficiency, and communication of analytical findings.
+</div>
+
+---
 
 # Introduction {.tabset}
 
 ## About This Portfolio
 
-This portfolio documents my journey through **STA 631: Statistical Modeling I** at Grand Valley State University. It consolidates the modeling techniques, coding practices, and statistical reasoning I developed over the semester into a single, reproducible R Markdown document.
+This portfolio documents my journey through Statistical Modeling I course. It consolidates the modeling, statistical reasoning, and interpretation techniques I developed over the semester.
 
-The portfolio is organized around the following structure:
+The portfolio is organized around this structure:
 
 1. **Data Preparation** — Loading, inspecting, cleaning, and splitting the data using tidyverse and tidymodels principles.
 2. **Exploratory Data Analysis** — Visualizing distributions, correlations, and group differences to guide modeling decisions.
-3. **Modeling** — Building and interpreting logistic regression, multinomial logistic regression, linear discriminant analysis (LDA), ridge and lasso regression, and polynomial regression models.
-4. **Model Validation** — Evaluating and comparing models using cross-validation, ROC curves, and performance metrics.
-5. **Show-and-Tell Reflections** — Five reflective sections, each aligned with a core course learning objective, with code examples and detailed explanations.
-6. **Participation Reflection** — A summary of my engagement, collaboration, and growth throughout the course.
+3. **Modeling** — Building and interpreting logistic regression, multinomial logistic regression, linear discriminant analysis (LDA), ridge and lasso regression, polynomial regression, and interaction models.
+4. **Model Validation** — Evaluating and comparing models using cross-validation, ROC curves, and accuarcy.
+5. **Reflections** — This is a section added into each of the models to explain what has been achieved and understood.These are mainly to highlight how the coding examples supported my journey in undesrtanding statistical modeling.
+6. **Participation Reflection** — This is a summary of my engagement, collaboration, and growth throughout the course.
 
 ## About the Dataset
 
-I use the **Breast Cancer Wisconsin (Diagnostic) Dataset** throughout this portfolio. The dataset contains 569 observations of fine needle aspirate (FNA) measurements from breast masses, with 30 numeric features describing cell nuclei characteristics (mean, standard error, and worst values for radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension). The binary outcome variable `diagnosis` classifies each tumor as **Malignant (M)** or **Benign (B)**.
+I used the **Breast Cancer Wisconsin (Diagnostic) Dataset** throughout this portfolio. The dataset contains 569 observations of fine needle aspirate (FNA) measurements from breast masses, with 30 numeric features describing cell nuclei characteristics (mean, standard error, and worst values for radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension). The binary outcome variable `diagnosis` classifies each tumor as **Malignant (M)** or **Benign (B)**.
 
-This dataset is well-suited for demonstrating classification and regression techniques because it:
+I picked this dataset because of the following characteristics:
 
 - Presents a meaningful binary classification task (logistic regression, LDA),
 - Contains highly correlated features (ideal for regularization with ridge/lasso),
 - Offers continuous predictors for polynomial regression,
 - Can be extended to multi-class problems for multinomial logistic regression.
-
-## Course Learning Objectives
-
-The five core learning objectives for STA 631 guide the structure of this portfolio:
-
-| # | Learning Objective |
-|---|-------------------|
-| 1 | Understand and apply foundations of probability theory and statistical inference |
-| 2 | Build, fit, and interpret regression models (linear, logistic, and extensions) |
-| 3 | Apply generalized linear models including Poisson regression and LDA |
-| 4 | Implement model selection techniques including regularization (ridge, lasso) and cross-validation |
-| 5 | Conduct reproducible statistical analyses using tidymodels and R Markdown workflows |
 
 ---
 
@@ -210,9 +371,10 @@ cancer_data %>%
   scroll_box(height = "400px")
 ```
 
-The vastly different feature scales — where `area_mean` ranges up to 2,500 while `smoothness_mean` sits around 0.09 — require `step_normalize()` to standardize all predictors to mean zero and unit variance, ensuring that no single feature dominates the model due to its scale, which is especially critical for LDA and regularized regression
+The vastly different feature scales, where `area_mean` ranges up to 2,500 while `smoothness_mean` around 0.09 require `step_normalize()` to standardize all predictors to mean zero and unit variance, ensuring that no single feature dominates the model due to its scale, which is critical for LDA and regularized regression
 
-## Class Distribution
+## Visualizations
+Class Distribution
 ```{r}
 # Class balance 
 cancer_data %>%
@@ -234,7 +396,7 @@ ggplot(cancer_data, aes(x = diagnosis, fill = diagnosis)) +
   theme_minimal(base_size = 14)
 ```
 
-## Feature Distributions by Diagnosis
+Feature Distributions by Diagnosis
 
 ```{r eda-density-mean, fig.height=10, fig.width=10}
 # Density plots for the 10 "mean" features, colored by diagnosis
@@ -251,7 +413,7 @@ cancer_data %>%
   theme(legend.position = "bottom")
 ```
 
-## Boxplots of Key Features
+Boxplots of Key Features
 
 ```{r eda-boxplots, fig.height=8, fig.width=10}
 # Boxplots for selected high-separation features
@@ -269,7 +431,7 @@ cancer_data %>%
   theme(legend.position = "none")
 ```
 
-## Correlation Matrix
+Correlation Matrix
 
 ```{r eda-correlation, fig.height=10, fig.width=10}
 cancer_data %>%
@@ -281,7 +443,7 @@ cancer_data %>%
            mar = c(0, 0, 2, 0))
 ```
 
-## Pairs Plot of Selected Features
+Pairs Plot of Selected Features
 
 ```{r eda-pairs, fig.height=8, fig.width=10, message=FALSE}
 cancer_data %>%
@@ -310,7 +472,7 @@ The boxplots reinforce the density plot findings. Malignant tumors consistently 
 
 The heatmap uncovers strong multicollinearity among size-related features — `radius_mean`, `perimeter_mean`, and `area_mean` are nearly perfectly correlated (r > 0.95), and their `_worst` and `_se` variants follow the same pattern. This motivates the use of `step_corr()` in the preprocessing recipe to remove redundant predictors, as well as regularization techniques like ridge and lasso regression that handle collinearity well.
 
-The pairs plot confirms that `compactness_mean` and `concavity_mean` are very highly correlated (r = 0.883). When stratified by diagnosis, malignant samples cluster distinctly from benign samples in pairings like `radius_mean` vs. `concavity_mean`. Notably, within-group correlations often differ from the overall correlation — for example, `radius_mean` vs. `concavity_mean` has an overall r = 0.676 but only r = 0.080 within benign cases — highlighting the importance of accounting for group structure in modeling.
+The pairs plot confirms that `compactness_mean` and `concavity_mean` are very highly correlated (r = 0.883). When stratified by diagnosis, malignant samples cluster distinctly from benign samples in pairings like `radius_mean` vs. `concavity_mean`. Notably, within-group correlations often differ from the overall correlation, an example, `radius_mean` vs. `concavity_mean` has an overall r = 0.676 but only r = 0.080 within benign cases — highlighting the importance of accounting for group structure in modeling.
 
 ** — The dataset contains strong predictive signal for distinguishing malignant from benign tumors**
 
@@ -319,7 +481,6 @@ The pairs plot confirms that `compactness_mean` and `concavity_mean` are very hi
 ** — The high Multicollinearity among predictors will be addressed through in the preprocessing before modeling and in the model selection**
 
 ---
-
 
 # Data Preparation {.tabset}
 ## Data Splitting
@@ -341,7 +502,8 @@ cancer_folds <- vfold_cv(cancer_train, v = 10, strata = diagnosis)
 
 The data was split in 80/20 proportion resulting to 453 observations for the training set and 115 obseravtions for the test set
 
-## Baseline 
+## Model Recipes
+Baseline 
 
 ```{r recipe-base}
 # Data preparation for all the base models
@@ -349,15 +511,10 @@ base_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
   step_normalize(all_numeric_predictors()) %>%
   step_nzv(all_numeric_predictors()) %>% 
   step_corr(all_numeric_predictors(), threshold = 0.9)
-
-base_recipe %>% 
-  prep() %>% 
-  juice() %>% 
-  glimpse()
 ```
 The baseline data preprocessing standardized all the numeric predictors to mean zero and unit variance, then removed 11 highly correlated or near-zero variance (those with no variation and are not useful for prediction). This left 19 predictors across 453 training observations. The affcetd variables were from two groups: the size (radius, perimeter, area — measuring the same underlying dimension) and the concavity pair (concavity and concave points — both capturing boundary indentation). Between each correlated pair. The step_corr checked correlations and then retain the one that differs most with all the variables than the other
 
-## Polynomial 
+Polynomial 
 
 ```{r recipe-poly}
 # Data preparation for Logistic Regression with polynomial
@@ -367,16 +524,10 @@ poly_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
   step_corr(all_numeric_predictors(), threshold = 0.9) %>%
   step_poly(all_numeric_predictors(), degree = 2)
 
-poly_recipe %>% 
-  prep() %>% 
-  juice() %>% 
-  ncol() %>%
-  cat("Number of features after polynomial expansion:", ., "\n")
 ```
+The polynomial after step_corr resulting to 39 variables which might have to be reduced later after determining the useful variables since that is a very big number for the few training set and might not converge and lead to no coefficients
 
-
-
-## Interaction 
+Interaction 
 
 ```{r recipe-interaction}
 # Data preparation for Logistic Regression with an interaction
@@ -386,6 +537,7 @@ interaction_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
   step_corr(all_numeric_predictors(), threshold = 0.9) %>%
   step_interact(terms = ~ area_mean:texture_mean + compactness_mean:concave_points_worst)
 ```
+I came up with an interaction term from the 19 variables that were retained after dtep_corr which might yet be removed incase the earlier models like lasso define the useful variables in both prediction and interpretation.
 
 ---
 
@@ -393,7 +545,25 @@ interaction_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
 
 ## Full Logistic Regression
 
-### Model Specification 
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Logistic regression directly demonstrates <strong>maximum likelihood estimation (MLE)</strong> — the glm engine estimates coefficients by maximizing the likelihood of observing the training data under a binomial model. The significant coefficients and p-values reflect <strong>statistical inference</strong> grounded in probability theory. This is also the foundational <strong>GLM for binary classification</strong>, linking the linear predictor to the probability of malignancy through the logit link function.
+</div>
+
+Model Specification 
 
 ```{r logistic-spec}
 logistic_spec <- logistic_reg() %>%
@@ -407,7 +577,7 @@ logistic_wf <- workflow() %>%
 
 This baseline logistic regression model was fit with 19 variables that were retained from the step_corr. It used the base_recipe earlier formulated in the data preparation step.
 
-### Cross-Validation
+Cross-Validation
 
 ```{r logistic-cv}
 logistic_cv <- logistic_wf %>%
@@ -424,7 +594,7 @@ logistic_cv %>%
 ```
 10-fold cross validation was implemented for this model which resulted to 96.02% accuarcy, 98% ROC, 97% sensitivity and 95% specificity.
 
-### Coefficients and Odds Ratios
+Coefficients and Odds Ratios
 
 ```{r logistic-fit}
 logistic_fit <- logistic_wf %>% fit(data = cancer_train)
@@ -440,7 +610,7 @@ logistic_fit %>%
 
 This model performed well however it had numerous of the predictors being insignificant which leads to the need to try a reduced model to compare the predicting power.
 
-### Confusion Matrix
+Confusion Matrix
 
 ```{r logistic-conf}
 logistic_cv %>%
@@ -454,7 +624,7 @@ logistic_cv %>%
 
 The full logistic regression model had 9 benign cases being misclassified as malignant and 9 malignant cases being classified as benign
 
-### ROC Curve
+ROC Curve
 
 ```{r logistic-roc}
 logistic_cv %>%
@@ -468,11 +638,31 @@ logistic_cv %>%
   theme_minimal(base_size = 14)
 ```
 
----
-
 ## Reduced Logistic Regression
 
-### Identifying Significant Variables
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+The reduced model demonstrates <strong>iterative model selection</strong> — using p-values from the full model to identify significant predictors, then refitting and removing variables that lost significance once confounding was removed. The final 4-predictor model is <strong>easily communicated to a general audience</strong>: four specific tumor measurements drive the diagnosis, each with a clear directional interpretation via odds ratios.
+</div>
+
+Identifying Significant Variables
 
 ```{r Rededuced variables}
 # Extract significant variables from the full logistic model (p < 0.05)
@@ -485,7 +675,7 @@ cat("Significant variables:\n")
 cat(paste(sig_vars, collapse = "\n"))
 ```
 
-### Reduced Logistic Recipe-2nd Iteration without fractal_dimension_worst
+Reduced Logistic Recipe-2nd Iteration
 ```{r Reduced recipe}
 reduced_recipe <- recipe(diagnosis ~ texture_mean + area_se + concavity_se + 
                          concave_points_worst,  
@@ -499,14 +689,14 @@ reduced_recipe %>%
 
 ```
 
-### Reduced Model Specification 
+Reduced Model Specification 
 ```{r reduced-spec}
 reduced_logistic_wf <- workflow() %>%
   add_recipe(reduced_recipe) %>%
   add_model(logistic_spec)
 ```
 
-### Reduced Cross-Validation
+Reduced Cross-Validation
 ```{r reduced-cv}
 reduced_cv <- reduced_logistic_wf %>%
   fit_resamples(
@@ -521,7 +711,7 @@ reduced_cv %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-### Accuracy Comparison between Full Logistic and Reduced Logistic Models
+Logistic Models Comparison
 ```{r reduced-accuracy}
 full_acc <- logistic_cv %>%
   collect_metrics() %>%
@@ -537,7 +727,7 @@ cat("Full Model Accuracy (19 predictors):", round(full_acc * 100, 2), "%\n")
 cat("Reduced Model Accuracy (4 predictors):", round(reduced_acc * 100, 2), "%\n")
 ```
 
-### Reduced Coefficients and Odds Ratios
+Reduced Coefficients and Odds Ratios
 
 ```{r reduced-fit}
 reduced_fit <- reduced_logistic_wf %>% fit(data = cancer_train)
@@ -550,7 +740,7 @@ reduced_fit %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-### Reduced Confusion Matrix
+Reduced Confusion Matrix
 ```{r reduced-conf}
 reduced_cv %>%
   collect_predictions() %>%
@@ -561,7 +751,7 @@ reduced_cv %>%
   theme_minimal(base_size = 14)
 ```
 
-### Reduced ROC
+Reduced ROC
 
 ```{r Reduced_ROC curve}
 reduced_cv %>%
@@ -620,7 +810,26 @@ Key Logistic Model Takeaways
 
 # Multinomial Logistic Regression {.tabset}
 ## Full Multinomial
-### Creating Multinomial Var
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Multinomial logistic regression extends MLE to a <strong>multi-class setting</strong>, estimating separate coefficient vectors for each severity level relative to the baseline. The prediction-vs-inference paradox (94.28% accuracy but 0 of 38 significant coefficients) directly illustrates how <strong>multicollinearity destabilizes MLE</strong> when the parameter space is large relative to the sample size.
+</div>
+
+Creating Multinomial Var
 
 ```{r multi-engineer}
 # Engineering a multinomial response variable
@@ -652,7 +861,7 @@ cancer_train_multi %>%
 
 To demonstrate multinomial logistic regression, I created a three-level severity variable: Low (benign tumors), Medium (malignant tumors below median radius_worst), and High (malignant tumors at or above median radius_worst).
 
-### Model Specification and Workflow
+Model Specification and Workflow
 
 ```{r multi-spec}
 multi_recipe <- recipe(severity ~ ., data = cancer_train_multi %>% select(-diagnosis)) %>%
@@ -667,7 +876,7 @@ multi_wf <- workflow() %>%
   add_model(multi_spec)
 ```
 
-### Cross-Validation
+Cross-Validation
 ```{r multi-cv}
 multi_folds <- vfold_cv(cancer_train_multi %>% select(-diagnosis), v = 10)
 
@@ -684,7 +893,7 @@ multi_cv %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-### Coefficients
+Coefficients
 ```{r multi-fit}
 # Prep the recipe and bake the training data
 multi_prepped <- multi_recipe %>% prep(training = cancer_train_multi %>% select(-diagnosis))
@@ -702,7 +911,7 @@ broom::tidy(multi_direct_fit) %>%
   scroll_box(height = "400px")
 ```
 
-### Confusion Matrix
+Confusion Matrix
 ```{r multi-conf}
 multi_cv %>%
   collect_predictions() %>%
@@ -713,7 +922,7 @@ multi_cv %>%
   theme_minimal(base_size = 14)
 ```
 
-### ROC Curves
+ROC Curves
 ```{r multi-roc}
 multi_cv %>%
   collect_predictions() %>%
@@ -728,7 +937,7 @@ multi_cv %>%
   theme_minimal(base_size = 14)
 ```
 
-### Per-Class Performance
+Per-Class Performance
 ```{r multi-per-class}
 multi_cv %>%
   collect_predictions() %>%
@@ -745,5 +954,1196 @@ multi_cv %>%
   kable(caption = "Multinomial Logistic Regression — Per-Class Accuracy") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
+
+Full Multinomial Key Takeaways
+
+```{r}
+tibble::tribble(
+  ~Aspect,                  ~Result,                            ~Verdict,
+  "Accuracy",               "94.28%",                           "Excellent",
+  "ROC AUC",                "98.84%",                           "Excellent",
+  "Sensitivity",            "92.10%",                           "Strong",
+  "Specificity",            "96.71%",                           "Strong",
+  "Significant predictors", "0 out of 19",                      "None — all p > 0.05",
+  "Largest p-value issue",  "p = 0.9993 (radius_mean, High)",   "Completely uninformative",
+  "Standard errors",        "Up to 120.67",                     "Wildly inflated — multicollinearity"
+) %>%
+  kable(caption = "Full Multinomial Model — The Prediction vs. Inference Paradox") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+```
+
+The full multinomial logistic regression model achieves strong predictive performance across all four evaluation metrics, yet reveals a critical inferential problem — not a single predictor reaches statistical significance. This paradox is a textbook consequence of severe multicollinearity combined with overparameterization. With 19 predictors across 3 severity levels, the model estimates 38 coefficients (2 sets of 19), but the predictors share so much overlapping information that the model cannot attribute importance to any individual variable. Standard errors balloon into the hundreds (e.g., 120.67 for radius_mean), meaning the model has virtually no certainty about any coefficient's true value. The model predicts well collectively, but no single variable matters individually — a clear signal that predictor reduction is necessary.
+
+
+## Reduced Multinomial Model
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Reducing from 19 to 4 predictors transformed the model from zero inference (0/38 significant) to full inference (9/10 significant), demonstrating that <strong>model selection resolves overparameterization</strong>. The dose-response gradient is communicated clearly i.e. more severe tumors show proportionally larger effects on size variability, boundary indentation, and texture.
+</div>
+
+To address the multicollinearity and overparameterization in the full multinomial model, I fit a reduced version using only the 4 predictors that survived significance-based selection in the binary logistic regression: texture_mean, area_se, concavity_se, and concave_points_worst.
+
+
+Model Specification and Workflow
+```{r multi-reduced-spec}
+multi_reduced_recipe <- recipe(
+  severity ~ texture_mean + area_se + concavity_se + concave_points_worst,
+  data = cancer_train_multi
+) %>%
+  step_normalize(all_numeric_predictors())
+
+multi_reduced_spec <- multinom_reg(penalty = 0.01) %>%
+  set_engine("nnet") %>%
+  set_mode("classification")
+
+multi_reduced_wf <- workflow() %>%
+  add_recipe(multi_reduced_recipe) %>%
+  add_model(multi_reduced_spec)
+```
+
+Cross-Validation
+```{r multi-reduced-cv}
+multi_reduced_folds <- vfold_cv(cancer_train_multi, v = 10)
+
+multi_reduced_cv <- multi_reduced_wf %>%
+  fit_resamples(
+    resamples = multi_reduced_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+multi_reduced_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Reduced Multinomial — 10-Fold CV Metrics (4 Predictors)", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Coefficients
+```{r multi-reduced-coef}
+multi_reduced_prepped <- multi_reduced_recipe %>% prep(training = cancer_train_multi)
+multi_reduced_baked   <- bake(multi_reduced_prepped, new_data = NULL)
+
+multi_reduced_direct <- multinom(severity ~ ., data = multi_reduced_baked, decay = 0.01, trace = FALSE)
+
+broom::tidy(multi_reduced_direct) %>%
+  arrange(y.level, p.value) %>%
+  kable(caption = "Reduced Multinomial — Coefficients (4 Predictors)", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r multi-reduced-conf}
+multi_reduced_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = severity, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Reduced Multinomial — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+ROC Curves
+```{r multi-reduced-roc}
+multi_reduced_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = severity, .pred_Low, .pred_Medium, .pred_High) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity, color = .level)) +
+  geom_path(linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  scale_color_manual(values = c("Low" = "darkblue", "Medium" = "mediumseagreen", "High" = "orange")) +
+  labs(title = "Reduced Multinomial — ROC Curves (One-vs-All)",
+       color = "Severity Level",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+Per-Class Performance
+```{r multi-reduced-perclass}
+multi_reduced_cv %>%
+  collect_predictions() %>%
+  group_by(.pred_class) %>%
+  summarise(
+    n         = n(),
+    correct   = sum(.pred_class == severity),
+    class_acc = round(correct / n * 100, 2)
+  ) %>%
+  rename(`Predicted Class` = .pred_class,
+         `Total Predictions` = n,
+         `Correct` = correct,
+         `Class Accuracy (%)` = class_acc) %>%
+  kable(caption = "Reduced Multinomial — Per-Class Accuracy") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+
+Reduced Multinomial Key Takeaways
+
+The multinomial logistic regression extends the binary logistic framework to classify tumors into three severity levels: Low (benign), Medium (malignant below median radius_worst), and High (malignant at or above median radius_worst). The full model with 19 predictors achieves strong predictive performance (94.28% accuracy, 98.84% ROC AUC), but suffers from severe multicollinearity — all 38 coefficients are statistically insignificant, with standard errors reaching as high as 120.67. This means the model predicts well collectively but cannot attribute importance to any individual variable. To resolve this, I fit a reduced model using only the 4 predictors that survived significance-based selection in the binary logistic regression: texture_mean, area_se, concavity_se, and concave_points_worst. The reduced model sacrifices only 2 percentage points of accuracy (92.27%) while gaining full inferential power — 9 of 10 coefficients reach statistical significance, standard errors drop below 1.50, and a clear dose-response gradient emerges: the same four predictors drive both Medium and High severity, with effect sizes scaling proportionally to severity level. The Medium class remains the hardest to predict (79.52% per-class accuracy) because it occupies the boundary between Low and High, but this tradeoff is justified by the substantial gain in model interpretability.
+
+```{r multi-full-summary-table}
+tibble::tribble(
+  ~Metric,                ~`Full (19 Predictors)`, ~`Reduced (4 Predictors)`, ~Takeaway,
+  "Accuracy",             "94.28%",                "92.27%",                  "Only -2.01 pp — minimal loss",
+  "ROC AUC",              "98.84%",                "96.10%",                  "Only -2.74 pp — still excellent",
+  "Sensitivity",          "92.10%",                "87.30%",                  "Slight drop — fewer features to separate classes",
+  "Specificity",          "96.71%",                "95.57%",                  "Nearly identical",
+  "Significant Coeffs",   "0 of 38",               "9 of 10",                "From zero inference to full inference",
+  "Max Std. Error",       "120.67",                "1.50",                    "80x reduction — multicollinearity eliminated",
+  "Low Class Accuracy",   "96.88%",                "96.52%",                  "Nearly identical — benign tumors well separated",
+  "Medium Class Accuracy","87.18%",                "79.52%",                  "Hardest class — sits at boundary between Low and High",
+  "High Class Accuracy",  "91.95%",                "90.36%",                  "Minimal loss — severe tumors remain well identified"
+) %>%
+  kable(caption = "Multinomial Logistic Regression — Full vs. Reduced Model Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+  
+```
+
+```{r multi-estimates-table}
+tibble::tribble(
+  ~Class,   ~Variable,              ~`Full Estimate`, ~`Full p-value`, ~`Reduced Estimate`, ~`Reduced p-value`, ~Explanation,
+  "High",   "area_se",              "2.12",           "0.9442",        "10.88",             "< 0.0001",         "Most powerful predictor of High severity — high measurement variability in tumor area indicates aggressive growth",
+  "High",   "concave_points_worst", "2.93",           "0.7387",        "7.17",              "< 0.0001",         "Severe boundary indentations are a hallmark of high-grade malignancy",
+  "High",   "concavity_se",         "2.45",           "0.8039",        "-2.83",             "0.0001",           "Higher concavity variability is protective — sign flipped and became significant once collinearity was removed",
+  "High",   "texture_mean",         "-0.10",          "0.9885",        "1.73",              "0.0001",           "Rougher texture increases high severity odds — direction corrected after removing collinear noise",
+  "Medium", "area_se",              "5.35",           "0.8017",        "6.56",              "< 0.0001",         "Area variability matters for Medium but less than High — consistent dose-response pattern",
+  "Medium", "concave_points_worst", "1.44",           "0.7929",        "4.90",              "< 0.0001",         "Moderate boundary irregularity — effect is 68% of the High class coefficient",
+  "Medium", "texture_mean",         "-0.03",          "0.9877",        "1.32",              "< 0.0001",         "Texture contributes consistently but with smaller magnitude than for High",
+  "Medium", "concavity_se",         "0.53",           "0.9390",        "-0.81",             "0.0447",           "Borderline significant — protective effect is 3.5x weaker than for High severity"
+) %>%
+  kable(caption = "Multinomial Coefficient Estimates — Full vs. Reduced Model") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  scroll_box(height = "400px")
+```
+
+## Multinomial Discussion
+The coefficient comparison reveals three critical insights:
+
+Sign corrections: In the full model, texture_mean had a negative estimate for both classes.This is the wrong direction, caused by collinear predictors pulling the coefficient arbitrarily. In the reduced model, it correctly flips to positive rougher texture = higher severity.
+
+Magnitude stabilization: area_se jumped from 2.12 (insignificant, p = 0.94) to 10.88 (highly significant, p < 0.0001) for the High class. The full model's estimate was suppressed because 18 other correlated variables were competing for the same signal.
+
+Dose-response gradient: All four predictors show larger effects for High than Medium — the coefficients scale with severity, which is clinically meaningful and only visible once multicollinearity is resolved.
+
+The reduced model is better than the full model with 19 predictors
+
 ---
+
+# Discriminant Analysis {.tabset}
+## Linear Discriminant Analysis
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+LDA is built on <strong>Bayes' theorem</strong> — it estimates class-conditional distributions and prior probabilities to compute posterior probabilities of class membership. You checked assumptions with Shapiro-Wilk (normality) and Box's M (equal covariances), demonstrating how <strong>inference depends on model assumptions</strong>. Comparing LDA to logistic regression illustrates <strong>model selection between competing probabilistic frameworks</strong>.
+</div>
+
+Model Specification
+
+```{r lda-spec}
+lda_spec <- discrim_linear() %>%
+  set_engine("MASS") %>%
+  set_mode("classification")
+
+lda_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(lda_spec)
+```
+
+Cross-Validation
+
+```{r lda-cv}
+lda_cv <- lda_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+lda_cv %>%
+  collect_metrics() %>%
+  kable(caption = "LDA — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Normality Checks
+```{r Normality Check}
+normality_results <- cancer_train %>%
+  pivot_longer(cols = -diagnosis, names_to = "variable", values_to = "value") %>%
+  group_by(diagnosis, variable) %>%
+  summarise(
+    shapiro_stat = shapiro.test(value)$statistic,
+    shapiro_p    = shapiro.test(value)$p.value,
+    .groups      = "drop"
+  ) %>%
+  mutate(normal = ifelse(shapiro_p > 0.05, "Yes", "No"))
+
+normality_results %>%
+  group_by(diagnosis, normal) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = normal, values_from = count, values_fill = 0) %>%
+  rename(Normal = Yes, `Not Normal` = No) %>%
+  kable(caption = "Shapiro-Wilk Normality Test Summary (p > 0.05 = Normal)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+```
+
+Equality in variance covariance matrices of the groups
+```{r Boxm}
+library(biotools)
+
+box_test <- boxM(
+  data     = cancer_train %>% select(-diagnosis),
+  grouping = cancer_train$diagnosis
+)
+
+tibble::tribble(
+  ~`Test Detail`,       ~Value,
+  "Chi-Sq Approx",      as.character(round(box_test$statistic, 2)),
+  "Degrees of Freedom", as.character(box_test$parameter),
+  "p-value",            format.pval(box_test$p.value, digits = 4),
+  "Conclusion",         ifelse(box_test$p.value < 0.05,
+    "Covariance matrices are NOT equal (violated)",
+    "Covariance matrices are approximately equal (satisfied)")
+) %>%
+  kable(caption = "Box's M Test — Equality of Covariance Matrices") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r}
+tibble::tribble(
+  ~Assumption,                   ~Test,                   ~Concern,
+  "Multivariate Normality",      "Shapiro-Wilk per var",  "Several violations — LDA robust with large n",
+  "Equal Covariance Matrices",   "Box's M test",          "Check output above",
+  "No Severe Multicollinearity", "step_corr(0.9)",        "11 variables removed during preprocessing"
+) %>%
+  kable(caption = "LDA Assumption Checks") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+LDA loadings
+
+```{r LDA Loadings}
+lda_fit <- lda_wf %>% fit(data = cancer_train)
+
+lda_raw <- lda_fit %>%
+  extract_fit_engine()
+
+lda_loading_df <- data.frame(
+  Variable = rownames(lda_raw$scaling),
+  LD1      = round(lda_raw$scaling[, 1], 4)
+) %>%
+  arrange(desc(abs(LD1)))
+
+lda_loading_df %>%
+  kable(caption = "Full LDA — Discriminant Loadings (LD1)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+```
+
+```{r}
+lda_loading_df %>%
+  mutate(Variable = reorder(Variable, abs(LD1))) %>%
+  ggplot(aes(x = LD1, y = Variable, fill = ifelse(LD1 > 0, "Positive", "Negative"))) +
+  geom_col() +
+  scale_fill_manual(values = c("Positive" = "darkblue", "Negative" = "grey40")) +
+  labs(title = "Full LDA — Discriminant Loadings (LD1)",
+       x = "LD1 Loading", y = NULL, fill = "Direction") +
+  theme_minimal(base_size = 14)
+```
+Cross Validation
+```{r}
+
+lda_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Full LDA — Confusion Matrix") +
+  theme_minimal(base_size = 14)
+```
+
+ROC 
+```{r}
+lda_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Full LDA — ROC Curve",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+```{r}
+tibble::tribble(
+  ~Aspect,                          ~Finding,                                          ~Implication,
+  "Accuracy",                       "94.70%",                                          "Strong overall classification",
+  "ROC AUC",                        "98.69%",                                          "Near-perfect class separation",
+  "Sensitivity",                    "98.94%",                                          "Catches 99% of malignant tumors — clinically critical",
+  "Specificity",                    "87.54%",                                          "12.5% of benign tumors misclassified — room for improvement",
+  "Normality Assumption",           "9 of 57 pass Shapiro-Wilk (16%)",                "Broadly violated — LDA robust with n = 453",
+  "Equal Covariance Assumption",    "Chi-Sq = 5857.22, p < 2.2e-16",                  "Decisively rejected — motivates QDA",
+  "Top Discriminant Variable",      "concave_points_worst (LD1 = 1.0510)",             "Consistent top predictor across all models"
+) %>%
+  kable(caption = "Full LDA — Summary") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+LDA Key Takeaway
+
+The LDA model with 19 predictors achieves strong classification performance (94.70% accuracy, 98.69% ROC AUC), with particularly high sensitivity (98.94%) — meaning it catches nearly every malignant tumor. Specificity is lower at 87.54%, indicating roughly 1 in 8 benign tumors gets flagged as malignant. The discriminant loadings reveal concave_points_worst (LD1 = 1.0510) as the dominant discriminator, followed by area_mean (0.7383) and fractal_dimension_worst (0.6706). This consistent with the variable importance patterns seen in logistic regression. However, both assumptions are violated: only 9 of 57 predictor-group combinations pass the Shapiro-Wilk normality test, and Box's M test decisively rejects equal covariance matrices within the groups (χ² = 5857.22, p < 2.2e-16). While LDA is robust to normality violations with large samples, the covariance inequality is a stronger concern which means benign and malignant tumors differ not only in their average measurements but in how their features co-vary. This motivates fitting Quadratic Discriminant Analysis, which relaxes the equal covariance assumption by estimating a separate covariance matrix for each class.
+
+
+## Quadratic Discriminant Analysis (QDA) 
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+QDA relaxes the equal covariance assumption, fitting a <strong>separate covariance matrix per class</strong>. The LDA-vs-QDA comparison demonstrates <strong>model selection driven by diagnostic evidence</strong> — Box's M rejected equal covariances, yet QDA did not dramatically outperform LDA. The tradeoff is communicated accessibly: LDA catches more cancers (98.94% sensitivity) while QDA produces fewer false alarms (93.49% specificity).
+</div>
+
+Model Specification
+```{r qda-spec}
+qda_spec <- discrim_quad() %>%
+  set_engine("MASS") %>%
+  set_mode("classification")
+
+qda_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(qda_spec)
+```
+
+Cross-Validation
+```{r qda-cv}
+qda_cv <- qda_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+qda_cv %>%
+  collect_metrics() %>%
+  kable(caption = "QDA — 10-Fold CV Metrics (19 Predictors)", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r qda-conf}
+qda_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "QDA — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+ROC Curve
+```{r qda-roc}
+qda_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "QDA — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+## Discriminant Analysis Comparison
+
+```{r}
+tibble::tribble(
+  ~Metric,        ~LDA,       ~QDA,       ~Difference,  ~Interpretation,
+  "Accuracy",     "94.70%",   "94.69%",   "-0.01 pp",   "Virtually identical overall performance",
+  "ROC AUC",      "98.69%",   "98.68%",   "-0.01 pp",   "Both achieve near-perfect discrimination",
+  "Sensitivity",  "98.94%",   "95.39%",   "-3.55 pp",   "QDA misses slightly more malignant tumors",
+  "Specificity",  "87.54%",   "93.49%",   "+5.95 pp",   "QDA is much better at correctly identifying benign tumors"
+) %>%
+  kable(caption = "LDA vs. QDA — Side-by-Side Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+```
+
+LDA and QDA achieve virtually identical accuracy (94.70% vs. 94.69%) and ROC AUC (98.69% vs. 98.68%), but they distribute their errors differently. The LDA model catches 98.94% of malignant tumors but misclassifies about 12.5% of benign tumors as malignant. QDA rebalances this tradeoff — it sacrifices 3.55 percentage points of sensitivity (95.39%) to gain 5.95 percentage points of specificity (93.49%). In clinical terms, LDA prioritizes never missing a cancer diagnosis at the cost of more false alarms, while QDA produces a more balanced classifier that reduces unnecessary follow-up procedures without dramatically increasing missed diagnoses. Although Box's M test decisively rejected the equal covariance assumption (χ² = 5857.22, p < 2.2e-16), QDA did not substantially outperform LDA in overall accuracy or ROC AUC. This suggests that while the covariance structures differ statistically between the Benign and Malignant groups, the two classes are well-separated enough that the shape of the decision boundary — linear versus curved — matters less than where the boundary is located. Both models confirm that the 19 preprocessed predictors provide strong discriminative power for breast cancer classification, with the choice between LDA and QDA ultimately depending on whether the clinical priority is maximizing cancer detection (LDA) or minimizing false positives (QDA).
+
+---
+
+# Penalized Logistic Regression {.tabset}
+
+Ridge and Lasso are regularized versions of logistic regression. They add a penalty term to the log-likelihood to shrink coefficients. Ridge (α = 0) shrinks toward zero but keeps all predictors, while Lasso (α = 1) can shrink coefficients exactly to zero, performing automatic variable selection.
+
+## Ridge Regression 
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Ridge applies a <strong>penalized GLM</strong> (logistic + L2 penalty) appropriate for a high-multicollinearity context with 19 correlated predictors. Tuning the penalty parameter λ via <code>tune_grid()</code> over 50 candidate values demonstrates <strong>model selection within a single model family</strong> — choosing the optimal bias-variance tradeoff from a continuum of regularization strengths. The very small optimal λ (0.0001) reveals that the data required minimal shrinkage, confirming the preprocessing already addressed multicollinearity.
+</div>
+
+Model Specification
+```{r ridge-spec}
+ridge_spec <- logistic_reg(
+  penalty = tune(),
+  mixture = 0
+) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+ridge_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(ridge_spec)
+```
+
+Tuning
+```{r ridge-tune}
+lambda_grid <- grid_regular(penalty(range = c(-4, 0)), levels = 50)
+
+ridge_tune <- ridge_wf %>%
+  tune_grid(
+    resamples = cancer_folds,
+    grid      = lambda_grid,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_grid(save_pred = TRUE)
+  )
+
+ridge_tune %>%
+  autoplot() +
+  labs(title = "Ridge — Performance Across Lambda Values") +
+  theme_minimal(base_size = 14)
+```
+
+Best Lambda
+```{r ridge-best}
+ridge_best <- ridge_tune %>%
+  select_best(metric = "roc_auc")
+
+ridge_best %>%
+  kable(caption = "Ridge — Best Lambda (by ROC AUC)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+These classes were pretty much already separated thus ridge did not need more shrinking on the coefficients evident from the low lambda
+
+Finalize and Fit
+```{r ridge-final}
+ridge_final_wf <- ridge_wf %>%
+  finalize_workflow(ridge_best)
+
+ridge_fit <- ridge_final_wf %>%
+  fit(data = cancer_train)
+```
+
+Coefficients
+```{r ridge-coefs}
+ridge_coefs <- ridge_fit %>%
+  extract_fit_engine() %>%
+  coef(s = ridge_best$penalty) %>%
+  as.matrix() %>%
+  as.data.frame() %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 2) %>%
+  filter(Variable != "(Intercept)") %>%
+  arrange(desc(abs(Coefficient)))
+
+ridge_coefs %>%
+  mutate(Coefficient = round(Coefficient, 4)) %>%
+  kable(caption = "Ridge — Coefficients at Best Lambda") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r ridge-coef-plot, fig.height=6}
+ridge_coefs %>%
+  mutate(Variable = reorder(Variable, abs(Coefficient))) %>%
+  ggplot(aes(x = Coefficient, y = Variable, fill = ifelse(Coefficient > 0, "Positive", "Negative"))) +
+  geom_col() +
+  scale_fill_manual(values = c("Positive" = "darkblue", "Negative" = "grey40")) +
+  labs(title = "Ridge — Coefficient Plot at Best Lambda",
+       x = "Coefficient", y = NULL, fill = "Direction") +
+  theme_minimal(base_size = 14)
+```
+
+Cross-Validation Metrics
+```{r ridge-cv-metrics}
+ridge_cv_metrics <- ridge_tune %>%
+  collect_predictions(parameters = ridge_best) %>%
+  metrics(truth = diagnosis, estimate = .pred_class, .pred_Benign) %>%
+  bind_rows(
+    ridge_tune %>%
+      collect_predictions(parameters = ridge_best) %>%
+      sensitivity(truth = diagnosis, estimate = .pred_class),
+    ridge_tune %>%
+      collect_predictions(parameters = ridge_best) %>%
+      specificity(truth = diagnosis, estimate = .pred_class)
+  )
+
+ridge_cv_metrics %>%
+  kable(caption = "Ridge — CV Metrics at Best Lambda", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r ridge-conf}
+ridge_tune %>%
+  collect_predictions(parameters = ridge_best) %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Ridge — Confusion Matrix (CV at Best Lambda)") +
+  theme_minimal(base_size = 14)
+```
+
+ROC Curve
+```{r ridge-roc}
+ridge_tune %>%
+  collect_predictions(parameters = ridge_best) %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Ridge — ROC Curve (CV at Best Lambda)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+Ridge Key Takeaways
+
+The Ridge model (α = 0) was tuned over 50 lambda values ranging from 10⁻⁴ to 1, with the optimal penalty selected at λ = 0.0001 based on ROC AUC. This very small penalty indicates the data requires minimal regularization — the classes are already well-separated and the coefficients do not need heavy shrinkage. Ridge achieves 94.48% accuracy, 99.16% ROC AUC, 98.24% sensitivity, and 88.17% specificity under 10-fold cross-validation — performance comparable to the unpenalized logistic regression and LDA models.
+
+As expected, Ridge retains all 19 predictors — none are shrunk exactly to zero. The top three coefficients are area_mean (0.9769), concave_points_worst (0.8225), and area_se (0.6833), confirming the same dominant predictors identified across logistic regression and LDA. Notably, area_mean overtakes concave_points_worst as the top predictor under Ridge, whereas LDA's discriminant loadings ranked concave_points_worst first — this reflects how different penalty structures redistribute importance among correlated predictors. The negative coefficients for fractal_dimension_mean (-0.4370), symmetry_se (-0.2152), and fractal_dimension_se (-0.1908) indicate these features are associated with benign classification after controlling for all other predictors.
+
+The key limitation of Ridge is that it cannot perform variable selection — it keeps all predictors in the model, which reduces interpretability compared to methods that can eliminate irrelevant features. This motivates fitting Lasso (α = 1), which can shrink coefficients exactly to zero and identify a parsimonious subset of predictors.
+
+
+## Lasso Regression 
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Lasso performs <strong>simultaneous MLE and variable selection</strong> via its L1 penalty, reducing 19 predictors to 10. This is model selection at two levels: tuning λ within the Lasso family, and identifying which predictors to retain versus shrink to zero. The penalized likelihood framework demonstrates how <strong>modifying the MLE objective</strong> can improve both prediction and inference. The resulting 10-predictor model is <strong>easily communicated to a general audience</strong> — the L1 penalty automatically identified the 10 most informative tumor measurements and discarded the 9 that added no discriminatory value.
+</div>
+
+Model Specification
+```{r lasso-spec}
+lasso_spec <- logistic_reg(
+  penalty = tune(),
+  mixture = 1
+) %>%
+  set_engine("glmnet") %>%
+  set_mode("classification")
+
+lasso_wf <- workflow() %>%
+  add_recipe(base_recipe) %>%
+  add_model(lasso_spec)
+```
+
+Tuning
+```{r lasso-tune}
+lasso_tune <- lasso_wf %>%
+  tune_grid(
+    resamples = cancer_folds,
+    grid      = lambda_grid,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_grid(save_pred = TRUE)
+  )
+
+lasso_tune %>%
+  autoplot() +
+  labs(title = "Lasso — Performance Across Lambda Values") +
+  theme_minimal(base_size = 14)
+```
+
+Best Lambda
+```{r lasso-best}
+lasso_best <- lasso_tune %>%
+  select_best(metric = "roc_auc")
+
+lasso_best %>%
+  kable(caption = "Lasso — Best Lambda (by ROC AUC)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Finalize and Fit
+```{r lasso-final}
+lasso_final_wf <- lasso_wf %>%
+  finalize_workflow(lasso_best)
+
+lasso_fit <- lasso_final_wf %>%
+  fit(data = cancer_train)
+```
+
+Coefficients
+```{r lasso-coefs}
+lasso_coefs <- lasso_fit %>%
+  extract_fit_engine() %>%
+  coef(s = lasso_best$penalty) %>%
+  as.matrix() %>%
+  as.data.frame() %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 2) %>%
+  filter(Variable != "(Intercept)") %>%
+  arrange(desc(abs(Coefficient)))
+
+lasso_coefs %>%
+  mutate(Coefficient = round(Coefficient, 4)) %>%
+  kable(caption = "Lasso — Coefficients at Best Lambda") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+```{r lasso-coef-plot, fig.height=6}
+lasso_coefs %>%
+  mutate(Variable = reorder(Variable, abs(Coefficient))) %>%
+  ggplot(aes(x = Coefficient, y = Variable, fill = ifelse(Coefficient > 0, "Positive", "Negative"))) +
+  geom_col() +
+  scale_fill_manual(values = c("Positive" = "darkblue", "Negative" = "grey40")) +
+  labs(title = "Lasso — Coefficient Plot at Best Lambda",
+       x = "Coefficient", y = NULL, fill = "Direction") +
+  theme_minimal(base_size = 14)
+```
+
+Variables Selected by Lasso
+```{r lasso-selected}
+lasso_kept <- lasso_coefs %>% filter(Coefficient != 0)
+lasso_dropped <- lasso_coefs %>% filter(Coefficient == 0)
+
+bind_rows(
+  lasso_kept %>% mutate(Status = "Kept", Coefficient = round(Coefficient, 4)),
+  lasso_dropped %>% mutate(Status = "Dropped", Coefficient = round(Coefficient, 4))
+) %>%
+  select(Variable, Coefficient, Status) %>%
+  kable(caption = paste0("Lasso Variable Selection — ", 
+                         nrow(lasso_kept), " Kept, ", 
+                         nrow(lasso_dropped), " Dropped")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  row_spec(which(bind_rows(lasso_kept, lasso_dropped)$Coefficient == 0), 
+           color = "grey", italic = TRUE)
+```
+
+Cross-Validation Metrics
+```{r lasso-cv-metrics}
+lasso_cv_metrics <- lasso_tune %>%
+  collect_predictions(parameters = lasso_best) %>%
+  metrics(truth = diagnosis, estimate = .pred_class, .pred_Benign) %>%
+  bind_rows(
+    lasso_tune %>%
+      collect_predictions(parameters = lasso_best) %>%
+      sensitivity(truth = diagnosis, estimate = .pred_class),
+    lasso_tune %>%
+      collect_predictions(parameters = lasso_best) %>%
+      specificity(truth = diagnosis, estimate = .pred_class)
+  )
+
+lasso_cv_metrics %>%
+  kable(caption = "Lasso — CV Metrics at Best Lambda", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r lasso-conf}
+lasso_tune %>%
+  collect_predictions(parameters = lasso_best) %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Lasso — Confusion Matrix (CV at Best Lambda)") +
+  theme_minimal(base_size = 14)
+```
+
+ROC Curve
+```{r lasso-roc}
+lasso_tune %>%
+  collect_predictions(parameters = lasso_best) %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Lasso — ROC Curve (CV at Best Lambda)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+The Lasso model was tuned over 50 lambda values, with the optimal penalty selected at λ = 0.0036 based on ROC AUC notably larger than Ridge's λ = 0.0001, reflecting Lasso's ability to apply a stronger penalty while simultaneously eliminating irrelevant predictors. Lasso achieves 97.13% accuracy, 99.50% ROC AUC, 98.24% sensitivity, and 95.27% specificity — the strongest overall performance of any model fitted so far.
+
+Lasso's defining advantage is automatic variable selection: it retained 10 of 19 predictors and dropped 9 entirely to zero. The top three retained variables — area_se (3.1267), area_mean (2.9482), and concave_points_worst (2.1765) — are the same dominant predictors identified across logistic regression, LDA, and Ridge, reinforcing the consistency of the signal across all modeling approaches. The 9 dropped variables (smoothness_mean, compactness_mean, symmetry_mean, texture_se, smoothness_se, concavity_se, concave_points_se, compactness_worst, fractal_dimension_worst) contributed little discriminative value after accounting for the retained predictors — Lasso's L1 penalty effectively performed the variable selection that Ridge and LDA cannot.
+
+## Lasso and ridge Comparison
+
+```{r}
+tibble::tribble(
+  ~Metric,        ~Ridge,     ~Lasso,      
+  "Accuracy",     "94.48%",   "97.13%",     
+  "ROC AUC",      "99.16%",   "99.50%",     
+  "Sensitivity",  "98.24%",   "98.24%",   
+  "Specificity",  "88.17%",   "95.27%"
+) %>%
+  kable(caption = "Ridge vs. Lasso — Side-by-Side Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Ridge and Lasso both regularize logistic regression by penalizing coefficient magnitude, but they do so in fundamentally different ways — and the results clearly favor Lasso for this dataset. Both models match on sensitivity (98.24%), meaning they catch the same proportion of malignant tumors. However, Lasso dramatically outperforms Ridge in specificity (95.27% vs. 88.17%, a 7.10 percentage point gain) and overall accuracy (97.13% vs. 94.48%). Lasso also achieves a higher ROC AUC (99.50% vs. 99.16%), indicating stronger overall class separation. The key difference is variable selection: Ridge retains all 19 predictors with small, distributed coefficients, while Lasso eliminates 9 predictors entirely and concentrates the signal in 10 retained features. This produces a more parsimonious, interpretable, and better-performing model. The fact that Lasso achieves superior performance with nearly half the predictors removed suggests that the dropped variables were contributing noise rather than signal — Lasso's L1 penalty successfully identified and removed them, while Ridge's L2 penalty merely dampened their influence without eliminating it.
+
+---
+
+# Polynomial Model {.tabset}
+## Full Polynomial
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+The full polynomial model tests whether <strong>nonlinear transformations</strong> of predictors improve classification. Its convergence failure (NA coefficients) illustrates the consequences of overparameterization on MLE — when the feature space (~38 terms) exceeds what the data can support, <strong>maximum likelihood estimates become unstable</strong>. This directly motivates comparing it to a reduced polynomial specification, demonstrating model selection guided by diagnostic evidence.
+</div>
+
+Model Specification
+```{r poly-spec}
+poly_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+poly_wf <- workflow() %>%
+  add_recipe(poly_recipe) %>%
+  add_model(poly_spec)
+```
+
+Cross Validation
+```{r poly-cv}
+poly_cv <- poly_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+poly_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Polynomial Logistic Regression — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r poly-conf}
+poly_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Polynomial Logistic Regression — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+ROC Curve
+```{r poly-roc}
+poly_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Polynomial Logistic Regression — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+Full polynomial Key Takeaway
+
+Under 10-fold cross-validation, the polynomial model achieves 92.92% accuracy, 95.06% ROC AUC, 93.63% sensitivity, and 91.73% specificity. While these are reasonable numbers in absolute terms, the model shows signs of estimation instability — the expanded feature space produces coefficients that fail to converge reliably, as evidenced by the NA coefficient table. This indicates that the polynomial terms introduced more noise than signal, and the added curvature did not capture meaningful nonlinear patterns beyond what the linear terms already explain. The relatively balanced sensitivity and specificity suggest the model is not strongly biased toward either class, but the overall discriminative power (ROC AUC = 95.06%) is noticeably lower than models operating on the original linear feature space. The high standard error on accuracy (0.0118) also reflects greater fold-to-fold variability, consistent with an overparameterized model that fits differently depending on which observations land in each fold.
+
+## Reduced Polynomial Model
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+The reduced polynomial model uses Lasso's top 4 predictors to build a smarter polynomial specification (8 terms instead of ~38), demonstrating <strong>model selection guided by prior results</strong>. MLE converges cleanly with no NA values, and the significant quadratic term for <code>texture_mean</code> (p = 0.04) reveals a genuine <strong>nonlinear relationship</strong> that linear models missed — while the other three predictors are adequately captured by linear terms alone.
+</div>
+
+The full polynomial model expanded all 19 predictors to ~38 features, overwhelming the training data and producing unstable estimates with weaker performance (92.92% accuracy, 95.06% ROC AUC). Rather than abandon polynomial terms entirely, we used our Lasso results to guide a smarter approach — restricting the expansion to only the four top Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean). This reduces the feature space to just 8 terms, combining Lasso's variable selection with polynomial expansion to test whether curvature improves the model without the noise.
+
+Reduced Polynomial Recipe
+```{r poly-reduced-recipe}
+poly_reduced_recipe <- recipe(diagnosis ~ area_mean + concave_points_worst + 
+                                area_se + texture_mean, 
+                              data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_poly(all_numeric_predictors(), degree = 2)
+```
+
+Model Specification
+```{r poly-reduced-spec}
+poly_reduced_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+poly_reduced_wf <- workflow() %>%
+  add_recipe(poly_reduced_recipe) %>%
+  add_model(poly_reduced_spec)
+```
+
+Cross Validation
+```{r poly-reduced-cv}
+poly_reduced_cv <- poly_reduced_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+poly_reduced_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Polynomial (Reduced: 4 Predictors) — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+Coefficients
+```{r poly-reduced-fit}
+poly_reduced_fit <- poly_reduced_wf %>%
+  fit(data = cancer_train)
+
+poly_reduced_fit %>%
+  extract_fit_engine() %>%
+  tidy() %>%
+  mutate(across(where(is.numeric), ~round(., 4))) %>%
+  kable(caption = "Polynomial (Reduced) Coefficients") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Confusion Matrix
+```{r poly-reduced-conf}
+poly_reduced_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Polynomial (Reduced) — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+Roc Curve
+```{r poly-reduced-roc}
+poly_reduced_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Polynomial (Reduced) — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+Reduced Polynomial Key Takeaway
+
+The reduced polynomial model, built on the four Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean), achieves 96.24% accuracy, 99.30% ROC AUC, 97.87% sensitivity, and 93.49% specificity. With only 8 features (4 predictors × 2 polynomial terms), the coefficient estimates converge cleanly — no NA values. Two terms reach statistical significance: concave_points_worst (linear, p < 0.0001) and texture_mean (both linear p = 0.0002 and quadratic p = 0.04), suggesting that texture_mean does exhibit a slight curved relationship with diagnosis. The quadratic terms for area_mean and area_se are not significant, indicating their relationship with log-odds is adequately captured by a straight line.
+
+
+## Full and Reduced Polynomial Comparison 
+
+```{r}
+tibble::tribble(
+  ~Metric,                  ~`Full (19 predictors, ~38 terms)`, ~`Reduced (4 predictors, 8 terms)`,
+  "Accuracy",               "92.92%",                           "96.24%",
+  "ROC AUC",                "95.06%",                           "99.30%",
+  "Sensitivity",            "93.63%",                           "97.87%",
+  "Specificity",            "91.73%",                           "93.49%",
+  "Std Error (Accuracy)",   "0.0118",                           "0.0067",
+  "Coefficients",           "NA (failed to converge)",          "All estimated cleanly"
+) %>%
+  kable(caption = "Full vs. Reduced Polynomial — Side-by-Side Comparison") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  column_spec(3, bold = TRUE)
+
+```
+
+The reduced polynomial model improves on every single metric — and does it with fewer than one-quarter of the features. The full model drowned in ~38 noisy terms, producing unstable estimates and weak discrimination. By letting Lasso identify the four most important predictors first, the reduced model concentrates polynomial expansion where it matters, achieves stable convergence, and recovers nearly all the discriminative power of the best linear models. The one meaningful finding is that texture_mean benefits from a quadratic term (p = 0.04), while the other three predictors are well-served by linear terms alone.
+
+---
+
+# Interaction Logistic Regression {.tabset}
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation
+</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+Interaction terms test whether the effect of one predictor <strong>depends on the level of another</strong> — a hypothesis grounded in the probabilistic structure of the GLM. The non-significant interaction terms (p = 0.35 and p = 0.60) provide evidence for an <strong>additive model</strong>, a finding that is straightforward to <strong>communicate to a general audience</strong>: each predictor independently contributes to diagnosis without synergistic effects. This negative result is itself a form of model selection — confirming that the simpler additive model is preferred.
+</div>
+
+Interaction terms allow the effect of one predictor on diagnosis to depend on the level of another predictor. An example, the relationship between area_mean and malignancy might differ for tumors with high vs. low texture_mean. This captures synergistic effects that main-effects-only models miss.
+I analysed the intercation effect between the 4 reduced variables to see whether they have some dependability.
+
+Interaction Recipe
+```{r}
+interaction_reduced_recipe <- recipe(diagnosis ~ area_mean + concave_points_worst + 
+                                      area_se + texture_mean, 
+                                    data = cancer_train) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_interact(terms = ~ area_mean:texture_mean + area_mean:concave_points_worst)
+
+```
+Model Specification and Workflow
+
+```{r inter-spec}
+inter_reduced_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+
+inter_reduced_wf <- workflow() %>%
+  add_recipe(interaction_reduced_recipe) %>%
+  add_model(inter_reduced_spec)
+```
+
+Cross-Validation
+```{r inter-cv}
+inter_reduced_cv <- inter_reduced_wf %>%
+  fit_resamples(
+    resamples = cancer_folds,
+    metrics   = metric_set(accuracy, roc_auc, sensitivity, specificity),
+    control   = control_resamples(save_pred = TRUE)
+  )
+
+inter_reduced_cv %>%
+  collect_metrics() %>%
+  kable(caption = "Interaction (Reduced: 4 Predictors) — 10-Fold CV Metrics", digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Fit the Final Model
+```{r inter-fit}
+inter_reduced_fit <- inter_reduced_wf %>%
+  fit(data = cancer_train)
+
+inter_reduced_fit %>%
+  extract_fit_engine() %>%
+  tidy() %>%
+  mutate(across(where(is.numeric), ~round(., 4))) %>%
+  arrange(p.value) %>%
+  kable(caption = "Interaction (Reduced) — All Coefficients") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+```{r}
+inter_reduced_cv %>%
+  collect_predictions() %>%
+  conf_mat(truth = diagnosis, estimate = .pred_class) %>%
+  autoplot(type = "heatmap") +
+  scale_fill_gradient(low = "darkgrey", high = "darkblue") +
+  labs(title = "Interaction (Reduced) — Confusion Matrix (CV)") +
+  theme_minimal(base_size = 14)
+```
+
+
+ROC Curve
+```{r inter-roc}
+inter_reduced_cv %>%
+  collect_predictions() %>%
+  roc_curve(truth = diagnosis, .pred_Benign) %>%
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_path(color = "darkblue", linewidth = 1.2) +
+  geom_abline(lty = 2, color = "darkgrey") +
+  labs(title = "Interaction (Reduced) — ROC Curve (CV)",
+       x = "1 - Specificity", y = "Sensitivity") +
+  theme_minimal(base_size = 14)
+```
+
+The reduced interaction model (6 features) achieves strong performance (95.58% accuracy, 99.37% ROC AUC), but neither interaction term is statistically significant (p = 0.35 and p = 0.60). All four main effects individually are highly significant. This confirms that the predictors contribute additively — tumor size, texture, concavity, and area variability each independently influence diagnosis without synergistic effects. The interaction terms add no meaningful predictive value beyond what the main effects already capture.
+
+---
+
+# Model Selection{.tabset}
+
+<div class="objectives-ribbon"> Objectives Met</div>
+
+<div class="objective-item">
+<strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models
+</div>
+
+<div class="objective-item">
+<strong>Objective 4:</strong> Express the results of statistical models to a general audience
+</div>
+
+<div class="objective-item">
+<strong>Objective 5:</strong> Use programming software to fit and assess statistical models
+</div>
+
+<div class="objective-explanation">
+The grand comparison evaluates all nine candidate models under a <strong>unified 10-fold cross-validation framework</strong>, selecting Lasso as the winner based on accuracy, ROC AUC, sensitivity, and specificity. The comparison table is built <strong>programmatically</strong> from each model's CV object — no manual entry. The final recommendation — Lasso with 10 predictors achieving 97% accuracy — is <strong>expressed in terms a clinician can act on</strong>, fulfilling the goal of communicating statistical results to a general audience.
+</div>
+
+```{r}
+# Models from fit_resamples (column = mean) 
+fit_resample_models <- bind_rows(
+  logistic_cv      %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "Full Logistic Regression"),
+  reduced_cv       %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "Reduced Logistic Regression"),
+  lda_cv           %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "LDA"),
+  qda_cv           %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "QDA"),
+  poly_cv          %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "Polynomial (Full)"),
+  poly_reduced_cv  %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "Polynomial (Reduced)"),
+  inter_reduced_cv %>% collect_metrics() %>% select(.metric, mean) %>% mutate(Model = "Interaction (Reduced)")
+)
+
+# Ridge & Lasso from tune_grid (column = .estimate)
+tuned_models <- bind_rows(
+  ridge_cv_metrics %>% select(.metric, .estimate) %>% rename(mean = .estimate) %>% mutate(Model = "Ridge"),
+  lasso_cv_metrics %>% select(.metric, .estimate) %>% rename(mean = .estimate) %>% mutate(Model = "Lasso")
+)
+
+# Combine and pivot 
+grand_table <- bind_rows(fit_resample_models, tuned_models) %>%
+  filter(.metric %in% c("accuracy", "roc_auc", "sensitivity", "specificity")) %>%
+  select(Model, .metric, mean) %>%
+  pivot_wider(names_from = .metric, values_from = mean) %>%
+  mutate(across(where(is.numeric), ~round(., 4))) %>%
+  arrange(desc(accuracy))
+
+grand_table %>%
+  kable(caption = "Model Comparison — 10-Fold CV Performance",
+        col.names = c("Model", "Accuracy", "ROC AUC", "Sensitivity", "Specificity")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) %>%
+  row_spec(which(grand_table$Model == "Lasso"), bold = TRUE, background = "#d4edda")
+```
+
+## Model Selection Summary
+
+I evaluated nine models using 10-fold cross-validation. Lasso logistic regression was the top performer (97.13% accuracy, 99.50% ROC AUC) after retaining 10 of 19 predictors through its L1 penalty — dropping 9 redundant features while achieving the highest scores on every metric. Reduced models consistently outperformed their full counterparts, reinforcing that fewer, well-chosen features beat more features at every level. LDA captured the most malignant cases (98.94% sensitivity) but at the cost of more false positives, while QDA offered a more balanced tradeoff. Ridge mirrored standard logistic regression, confirming that multicollinearity was already handled during preprocessing. The full polynomial model was the weakest due to overparameterization, and interaction terms were not significant, confirming an additive relationship among predictors. Based on these results, I selected Lasso as the final model — 10 predictors, 97% accuracy, and the strongest balance of performance and simplicity.
+
+---
+
+Participation Reflection 
+
+<div class="objective-explanation">
+Throughout Statistical Modeling I, I participated actively and consistently in class and group discussions. I regularly asked clarifying questions, challenged ideas when appropriate, and contributed to conversations about modeling decisions and interpretation. 
+<br><br>
+My preparation outside of class reviewing readings, practicing code, and experimenting with workflows allowed me to contribute meaningfully during group discussions and collaborate effectively with peers. Overall, my participation reflected curiosity, engagement, and a commitment to building a supportive learning environment while strengthening my own understanding of statistical modeling.
+</div>
+
+<script>
+window.onscroll = function() {
+  let btn = document.getElementById("back-to-top");
+  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+};
+
+function scrollToTop() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+
+<div id="back-to-top" onclick="scrollToTop()">Back to Top</div>
 
