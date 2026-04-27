@@ -1,6 +1,5 @@
 # Statistical Modeling Portfolio  
-Predicting Breast Cancer Diagnosis  
-Author: Nancy Odhiambo  
+Predicting Breast Cancer Diagnosis   
 
 ## Overview  
 This repository contains my STA 631 Statistical Modeling Portfolio, developed using the Breast Cancer Wisconsin Diagnostic Dataset. The project demonstrates applied statistical modeling, model comparison, and workflow development using R and the tidymodels framework.
