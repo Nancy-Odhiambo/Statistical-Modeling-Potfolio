@@ -170,61 +170,60 @@ pre:not(.r) {
 <div class="objective-item">
 <strong>Objective 1:</strong> Describe probability as a foundation of statistical modeling, including inference and maximum likelihood estimation.  
 Demonstrated in:  
-<a href="#logistic-regression">Full Logistic Regression</a>,  
-<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
-<a href="#logistic-discussion">Logistic Discussion</a>,  
-<a href="#model-validation">ROC Curves & Cross‑Validation</a>
+<span class="highlight">Full Logistic Regression</span>,  
+<span class="highlight">Reduced Logistic Regression</span>,  
+<span class="highlight">Logistic Discussion</span>,  
+<span class="highlight">ROC Curves & Cross‑Validation</span>
 </div>
 
 <div class="objective-item">
 <strong>Objective 2:</strong> Apply the appropriate generalized linear model for a specific data context.  
 Demonstrated in:  
-<a href="#logistic-regression">Logistic Regression</a>,  
-<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
-<a href="#multinomial-logistic-regression">Multinomial Logistic Regression</a>,  
-<a href="#lda-model">LDA Model</a>,  
-<a href="#polynomial-regression">Polynomial Logistic Regression</a>,  
-<a href="#interaction-model">Interaction Logistic Regression</a>
+<span class="highlight">Logistic Regression</span>,  
+<span class="highlight">Reduced Logistic Regression</span>,  
+<span class="highlight">Multinomial Logistic Regression</span>,  
+<span class="highlight">LDA Model</span>,  
+<span class="highlight">Polynomial Logistic Regression</span>,  
+<span class="highlight">Interaction Logistic Regression</span>
 </div>
 
 <div class="objective-item">
 <strong>Objective 3:</strong> Demonstrate model selection given a set of candidate models.  
 Demonstrated in:  
-<a href="#reduced-logistic-regression">Full vs Reduced Logistic Regression</a>,  
-<a href="#lasso-regression">Lasso Regression</a>,  
-<a href="#ridge-regression">Ridge Regression</a>,  
-<a href="#polynomial-regression">Polynomial Regression</a>,  
-<a href="#interaction-model">Interaction Model</a>,  
-<a href="#model-validation">Cross‑Validation Comparisons</a>
+<span class="highlight">Full vs Reduced Logistic Regression</span>,  
+<span class="highlight">Lasso Regression</span>,  
+<span class="highlight">Ridge Regression</span>,  
+<span class="highlight">Polynomial Regression</span>,  
+<span class="highlight">Interaction Model</span>,  
+<span class="highlight">Cross‑Validation Comparisons</span>
 </div>
 
 <div class="objective-item">
 <strong>Objective 4:</strong> Express the results of statistical models to a general audience.  
 Demonstrated in:  
-<a href="#logistic-discussion">Logistic Discussion</a>,  
-<a href="#eda-summary">EDA Summary</a>,  
-<a href="#interpretation-tables">Interpretation Tables</a>,  
-<a href="#reduced-logistic-regression">Reduced Logistic Regression Interpretation</a>
+<span class="highlight">Logistic Discussion</span>,  
+<span class="highlight">EDA Summary</span>,  
+<span class="highlight">Interpretation Tables</span>,  
+<span class="highlight">Reduced Logistic Regression Interpretation</span>
 </div>
 
 <div class="objective-item">
 <strong>Objective 5:</strong> Use programming software to fit and assess statistical models.  
 Demonstrated in:  
-<a href="#data-preparation">Data Preparation</a>,  
-<a href="#logistic-regression">Logistic Regression</a>,  
-<a href="#reduced-logistic-regression">Reduced Logistic Regression</a>,  
-<a href="#lasso-regression">Lasso Regression</a>,  
-<a href="#ridge-regression">Ridge Regression</a>,  
-<a href="#lda-model">LDA Model</a>,  
-<a href="#polynomial-regression">Polynomial Regression</a>,  
-<a href="#interaction-model">Interaction Model</a>,  
-<a href="#model-validation">Cross‑Validation & ROC Curves</a>
+<span class="highlight">Data Preparation</span>,  
+<span class="highlight">Logistic Regression</span>,  
+<span class="highlight">Reduced Logistic Regression</span>,  
+<span class="highlight">Lasso Regression</span>,  
+<span class="highlight">Ridge Regression</span>,  
+<span class="highlight">LDA Model</span>,  
+<span class="highlight">Polynomial Regression</span>,  
+<span class="highlight">Interaction Model</span>,  
+<span class="highlight">Cross‑Validation & ROC Curves</span>
 </div>
 
-<div class="objective explanation">
+<div class="objective-explanation">
 This section outlines the five core learning objectives for Statistical Modeling I.  
-Each objective is demonstrated through applied modeling, interpretation, and reflection throughout this portfolio.  
-The models, workflows, and analyses included in later sections collectively show my growth in statistical reasoning, programming proficiency, and communication of analytical findings.
+Each objective is demonstrated through applied modeling, interpretation, and reflection throughout this portfolio.
 </div>
 
 ---
@@ -475,11 +474,11 @@ The heatmap uncovers strong multicollinearity among size-related features — `r
 
 The pairs plot confirms that `compactness_mean` and `concavity_mean` are very highly correlated (r = 0.883). When stratified by diagnosis, malignant samples cluster distinctly from benign samples in pairings like `radius_mean` vs. `concavity_mean`. Notably, within-group correlations often differ from the overall correlation, an example, `radius_mean` vs. `concavity_mean` has an overall r = 0.676 but only r = 0.080 within benign cases — highlighting the importance of accounting for group structure in modeling.
 
-** — The dataset contains strong predictive signal for distinguishing malignant from benign tumors**
+ — The dataset contains strong predictive signal for distinguishing malignant from benign tumors
 
-** — Size and concavity features are the most discriminating predictors**
+ — Size and concavity features are the most discriminating predictors
 
-** — The high Multicollinearity among predictors will be addressed through in the preprocessing before modeling and in the model selection**
+ — The high Multicollinearity among predictors will be addressed through in the preprocessing before modeling and in the model selection
 
 ---
 
@@ -513,7 +512,7 @@ base_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
   step_nzv(all_numeric_predictors()) %>% 
   step_corr(all_numeric_predictors(), threshold = 0.9)
 ```
-The baseline data preprocessing standardized all the numeric predictors to mean zero and unit variance, then removed 11 highly correlated or near-zero variance (those with no variation and are not useful for prediction). This left 19 predictors across 453 training observations. The affcetd variables were from two groups: the size (radius, perimeter, area — measuring the same underlying dimension) and the concavity pair (concavity and concave points — both capturing boundary indentation). Between each correlated pair. The step_corr checked correlations and then retain the one that differs most with all the variables than the other
+The baseline data preprocessing standardized all the numeric predictors to mean zero and unit variance, then removed 11 highly correlated or near-zero variance (those with no variation and are not useful for prediction). This left 19 predictors across 453 training observations. The affcetd variables were from two groups: the size (radius, perimeter, area measuring the same underlying dimension) and the concavity pair (concavity and concave points — both capturing boundary indentation). Between each correlated pair. The step_corr checked correlations and then retain the one that differs most with all the variables than the others. 
 
 Polynomial 
 
@@ -526,7 +525,7 @@ poly_recipe <- recipe(diagnosis ~ ., data = cancer_train) %>%
   step_poly(all_numeric_predictors(), degree = 2)
 
 ```
-The polynomial after step_corr resulting to 39 variables which might have to be reduced later after determining the useful variables since that is a very big number for the few training set and might not converge and lead to no coefficients
+The polynomial after step_corr resulting to 38 variables which might have to be reduced later after determining the useful variables since that is a very big number for the few training set and might not converge and lead to no coefficients
 
 Interaction 
 
@@ -561,7 +560,7 @@ I came up with an interaction term from the 19 variables that were retained afte
 </div>
 
 <div class="objective-explanation">
-Logistic regression directly demonstrates <strong>maximum likelihood estimation (MLE)</strong> — the glm engine estimates coefficients by maximizing the likelihood of observing the training data under a binomial model. The significant coefficients and p-values reflect <strong>statistical inference</strong> grounded in probability theory. This is also the foundational <strong>GLM for binary classification</strong>, linking the linear predictor to the probability of malignancy through the logit link function.
+Logistic regression directly demonstrates <strong>maximum likelihood estimation (MLE)</strong>. The glm engine estimates coefficients by maximizing the likelihood of observing the training data under a binomial model. The significant coefficients and p-values reflect <strong>statistical inference</strong> grounded in probability theory. This is also the foundational <strong>GLM for binary classification</strong>, linking the linear predictor to the probability of malignancy through the logit link function.
 </div>
 
 Model Specification 
@@ -965,16 +964,16 @@ tibble::tribble(
   "ROC AUC",                "98.84%",                           "Excellent",
   "Sensitivity",            "92.10%",                           "Strong",
   "Specificity",            "96.71%",                           "Strong",
-  "Significant predictors", "0 out of 19",                      "None — all p > 0.05",
+  "Significant predictors", "0 out of 19",                      "all p > 0.05",
   "Largest p-value issue",  "p = 0.9993 (radius_mean, High)",   "Completely uninformative",
-  "Standard errors",        "Up to 120.67",                     "Wildly inflated — multicollinearity"
+  "Standard errors",        "Up to 120.67",                     "Serious multicollinearity"
 ) %>%
   kable(caption = "Full Multinomial Model — The Prediction vs. Inference Paradox") %>%
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 
 ```
 
-The full multinomial logistic regression model achieves strong predictive performance across all four evaluation metrics, yet reveals a critical inferential problem — not a single predictor reaches statistical significance. This paradox is a textbook consequence of severe multicollinearity combined with overparameterization. With 19 predictors across 3 severity levels, the model estimates 38 coefficients (2 sets of 19), but the predictors share so much overlapping information that the model cannot attribute importance to any individual variable. Standard errors balloon into the hundreds (e.g., 120.67 for radius_mean), meaning the model has virtually no certainty about any coefficient's true value. The model predicts well collectively, but no single variable matters individually — a clear signal that predictor reduction is necessary.
+The full multinomial logistic regression model achieves strong predictive performance across all four evaluation metrics, yet reveals a critical inferential problem, not a single predictor reaches statistical significance. This shows severe multicollinearity combined with overparameterization. With 19 predictors across 3 severity levels, the model estimates 38 coefficients (2 sets of 19), but the predictors share so much overlapping information that the model cannot attribute importance to any individual variable. Standard errors inflate into the hundreds (e.g. 120.67 for radius_mean), meaning the model has virtually no certainty about any coefficient's true value. The model predicts well collectively, but no single variable matters individually. This is a clear signal that predictor reduction is necessary.
 
 
 ## Reduced Multinomial Model
@@ -1094,7 +1093,7 @@ multi_reduced_cv %>%
 
 Reduced Multinomial Key Takeaways
 
-The multinomial logistic regression extends the binary logistic framework to classify tumors into three severity levels: Low (benign), Medium (malignant below median radius_worst), and High (malignant at or above median radius_worst). The full model with 19 predictors achieves strong predictive performance (94.28% accuracy, 98.84% ROC AUC), but suffers from severe multicollinearity — all 38 coefficients are statistically insignificant, with standard errors reaching as high as 120.67. This means the model predicts well collectively but cannot attribute importance to any individual variable. To resolve this, I fit a reduced model using only the 4 predictors that survived significance-based selection in the binary logistic regression: texture_mean, area_se, concavity_se, and concave_points_worst. The reduced model sacrifices only 2 percentage points of accuracy (92.27%) while gaining full inferential power — 9 of 10 coefficients reach statistical significance, standard errors drop below 1.50, and a clear dose-response gradient emerges: the same four predictors drive both Medium and High severity, with effect sizes scaling proportionally to severity level. The Medium class remains the hardest to predict (79.52% per-class accuracy) because it occupies the boundary between Low and High, but this tradeoff is justified by the substantial gain in model interpretability.
+The multinomial logistic regression extends the binary logistic framework to classify tumors into three severity levels: Low (benign), Medium (malignant below median radius_worst), and High (malignant at or above median radius_worst). The full model with 19 predictors achieves strong predictive performance (94.28% accuracy, 98.84% ROC AUC), but suffers from severe multicollinearity all 38 coefficients are statistically insignificant, with standard errors reaching as high as 120.67. This means the model predicts well collectively but cannot attribute importance to any individual variable. To resolve this, I fit a reduced model using only the 4 predictors that survived significance-based selection in the binary logistic regression: texture_mean, area_se, concavity_se, and concave_points_worst. The reduced model sacrifices only 2 percentage points of accuracy (92.27%) while gaining full inferential power 9 of 10 coefficients reach statistical significance, standard errors drop below 1.50, and a clear dose-response gradient emerges: the same four predictors drive both Medium and High severity, with effect sizes scaling proportionally to severity level. The Medium class remains the hardest to predict (79.52% per-class accuracy) because it occupies the boundary between Low and High, but this tradeoff is justified by the substantial gain in model interpretability.
 
 ```{r multi-full-summary-table}
 tibble::tribble(
@@ -1138,7 +1137,7 @@ Sign corrections: In the full model, texture_mean had a negative estimate for bo
 
 Magnitude stabilization: area_se jumped from 2.12 (insignificant, p = 0.94) to 10.88 (highly significant, p < 0.0001) for the High class. The full model's estimate was suppressed because 18 other correlated variables were competing for the same signal.
 
-Dose-response gradient: All four predictors show larger effects for High than Medium — the coefficients scale with severity, which is clinically meaningful and only visible once multicollinearity is resolved.
+Dose-response gradient: All four predictors show larger effects for High than Medium, the coefficients scale with severity, which is clinically meaningful and only visible once multicollinearity is resolved.
 
 The reduced model is better than the full model with 19 predictors
 
@@ -1166,7 +1165,7 @@ The reduced model is better than the full model with 19 predictors
 </div>
 
 <div class="objective-explanation">
-LDA is built on <strong>Bayes' theorem</strong> — it estimates class-conditional distributions and prior probabilities to compute posterior probabilities of class membership. You checked assumptions with Shapiro-Wilk (normality) and Box's M (equal covariances), demonstrating how <strong>inference depends on model assumptions</strong>. Comparing LDA to logistic regression illustrates <strong>model selection between competing probabilistic frameworks</strong>.
+LDA is built on <strong>Bayes' theorem</strong> which it estimates class-conditional distributions and prior probabilities to compute posterior probabilities of class membership. You checked assumptions with Shapiro-Wilk (normality) and Box's M (equal covariances), demonstrating how <strong>inference depends on model assumptions</strong>. Comparing LDA to logistic regression illustrates <strong>model selection between competing probabilistic frameworks</strong>.
 </div>
 
 Model Specification
@@ -1312,10 +1311,10 @@ tibble::tribble(
   ~Aspect,                          ~Finding,                                          ~Implication,
   "Accuracy",                       "94.70%",                                          "Strong overall classification",
   "ROC AUC",                        "98.69%",                                          "Near-perfect class separation",
-  "Sensitivity",                    "98.94%",                                          "Catches 99% of malignant tumors — clinically critical",
-  "Specificity",                    "87.54%",                                          "12.5% of benign tumors misclassified — room for improvement",
-  "Normality Assumption",           "9 of 57 pass Shapiro-Wilk (16%)",                "Broadly violated — LDA robust with n = 453",
-  "Equal Covariance Assumption",    "Chi-Sq = 5857.22, p < 2.2e-16",                  "Decisively rejected — motivates QDA",
+  "Sensitivity",                    "98.94%",                                          "Catches 99% of malignant tumors which is clinically critical",
+  "Specificity",                    "87.54%",                                          "12.5% of benign tumors misclassified",
+  "Normality Assumption",           "9 of 57 pass Shapiro-Wilk (16%)",                "Broadly violated, LDA robust with n = 453",
+  "Equal Covariance Assumption",    "Chi-Sq = 5857.22, p < 2.2e-16",                  "Violated suggesting QDA",
   "Top Discriminant Variable",      "concave_points_worst (LD1 = 1.0510)",             "Consistent top predictor across all models"
 ) %>%
   kable(caption = "Full LDA — Summary") %>%
@@ -1348,7 +1347,7 @@ The LDA model with 19 predictors achieves strong classification performance (94.
 </div>
 
 <div class="objective-explanation">
-QDA relaxes the equal covariance assumption, fitting a <strong>separate covariance matrix per class</strong>. The LDA-vs-QDA comparison demonstrates <strong>model selection driven by diagnostic evidence</strong> — Box's M rejected equal covariances, yet QDA did not dramatically outperform LDA. The tradeoff is communicated accessibly: LDA catches more cancers (98.94% sensitivity) while QDA produces fewer false alarms (93.49% specificity).
+QDA relaxes the equal covariance assumption, fitting a <strong>separate covariance matrix per class</strong>. The LDA-vs-QDA comparison demonstrates <strong>model selection driven by diagnostic evidence</strong>. Box's M rejected equal covariances, yet QDA did not dramatically outperform LDA. The tradeoff is communicated accessibly: LDA catches more cancers (98.94% sensitivity) while QDA produces fewer false alarms (93.49% specificity).
 </div>
 
 Model Specification
@@ -1441,7 +1440,7 @@ Ridge and Lasso are regularized versions of logistic regression. They add a pena
 </div>
 
 <div class="objective-explanation">
-Ridge applies a <strong>penalized GLM</strong> (logistic + L2 penalty) appropriate for a high-multicollinearity context with 19 correlated predictors. Tuning the penalty parameter λ via <code>tune_grid()</code> over 50 candidate values demonstrates <strong>model selection within a single model family</strong> — choosing the optimal bias-variance tradeoff from a continuum of regularization strengths. The very small optimal λ (0.0001) reveals that the data required minimal shrinkage, confirming the preprocessing already addressed multicollinearity.
+Ridge applies a <strong>penalized GLM</strong> (logistic + L2 penalty) appropriate for a high-multicollinearity context with 19 correlated predictors. Tuning the penalty parameter λ via <code>tune_grid()</code> over 50 candidate values demonstrates <strong>model selection within a single model family</strong>. Choosing the optimal bias-variance tradeoff from a continuum of regularization strengths. The very small optimal λ (0.0001) reveals that the data required minimal shrinkage, confirming the preprocessing already addressed multicollinearity.
 </div>
 
 Model Specification
@@ -1570,11 +1569,11 @@ ridge_tune %>%
 
 Ridge Key Takeaways
 
-The Ridge model (α = 0) was tuned over 50 lambda values ranging from 10⁻⁴ to 1, with the optimal penalty selected at λ = 0.0001 based on ROC AUC. This very small penalty indicates the data requires minimal regularization — the classes are already well-separated and the coefficients do not need heavy shrinkage. Ridge achieves 94.48% accuracy, 99.16% ROC AUC, 98.24% sensitivity, and 88.17% specificity under 10-fold cross-validation — performance comparable to the unpenalized logistic regression and LDA models.
+The Ridge model (α = 0) was tuned over 50 lambda values ranging from 10⁻⁴ to 1, with the optimal penalty selected at λ = 0.0001 based on ROC AUC. This very small penalty indicates the data requires minimal regularization. The classes are already well-separated and the coefficients do not need heavy shrinkage. Ridge achieves 94.48% accuracy, 99.16% ROC AUC, 98.24% sensitivity, and 88.17% specificity under 10-fold cross-validation performance comparable to the unpenalized logistic regression and LDA models.
 
-As expected, Ridge retains all 19 predictors — none are shrunk exactly to zero. The top three coefficients are area_mean (0.9769), concave_points_worst (0.8225), and area_se (0.6833), confirming the same dominant predictors identified across logistic regression and LDA. Notably, area_mean overtakes concave_points_worst as the top predictor under Ridge, whereas LDA's discriminant loadings ranked concave_points_worst first — this reflects how different penalty structures redistribute importance among correlated predictors. The negative coefficients for fractal_dimension_mean (-0.4370), symmetry_se (-0.2152), and fractal_dimension_se (-0.1908) indicate these features are associated with benign classification after controlling for all other predictors.
+As expected, Ridge retains all 19 predictors none are shrunk exactly to zero. The top three coefficients are area_mean (0.9769), concave_points_worst (0.8225), and area_se (0.6833), confirming the same dominant predictors identified across logistic regression and LDA. Notably, area_mean overtakes concave_points_worst as the top predictor under Ridge, whereas LDA's discriminant loadings ranked concave_points_worst first this reflects how different penalty structures redistribute importance among correlated predictors. The negative coefficients for fractal_dimension_mean (-0.4370), symmetry_se (-0.2152), and fractal_dimension_se (-0.1908) indicate these features are associated with benign classification after controlling for all other predictors.
 
-The key limitation of Ridge is that it cannot perform variable selection — it keeps all predictors in the model, which reduces interpretability compared to methods that can eliminate irrelevant features. This motivates fitting Lasso (α = 1), which can shrink coefficients exactly to zero and identify a parsimonious subset of predictors.
+The key limitation of Ridge is that it cannot perform variable selection it keeps all predictors in the model, which reduces interpretability compared to methods that can eliminate irrelevant features. This motivates fitting Lasso (α = 1), which can shrink coefficients exactly to zero and identify a parsimonious subset of predictors.
 
 
 ## Lasso Regression 
@@ -1602,7 +1601,7 @@ The key limitation of Ridge is that it cannot perform variable selection — it 
 </div>
 
 <div class="objective-explanation">
-Lasso performs <strong>simultaneous MLE and variable selection</strong> via its L1 penalty, reducing 19 predictors to 10. This is model selection at two levels: tuning λ within the Lasso family, and identifying which predictors to retain versus shrink to zero. The penalized likelihood framework demonstrates how <strong>modifying the MLE objective</strong> can improve both prediction and inference. The resulting 10-predictor model is <strong>easily communicated to a general audience</strong> — the L1 penalty automatically identified the 10 most informative tumor measurements and discarded the 9 that added no discriminatory value.
+Lasso performs <strong>simultaneous MLE and variable selection</strong> via its L1 penalty, reducing 19 predictors to 10. This is model selection at two levels: tuning λ within the Lasso family, and identifying which predictors to retain versus shrink to zero. The penalized likelihood framework demonstrates how <strong>modifying the MLE objective</strong> can improve both prediction and inference. The resulting 10-predictor model is <strong>easily communicated to a general audience</strong> the L1 penalty automatically identified the 10 most informative tumor measurements and discarded the 9 that added no discriminatory value.
 </div>
 
 Model Specification
@@ -1744,9 +1743,9 @@ lasso_tune %>%
   theme_minimal(base_size = 14)
 ```
 
-The Lasso model was tuned over 50 lambda values, with the optimal penalty selected at λ = 0.0036 based on ROC AUC notably larger than Ridge's λ = 0.0001, reflecting Lasso's ability to apply a stronger penalty while simultaneously eliminating irrelevant predictors. Lasso achieves 97.13% accuracy, 99.50% ROC AUC, 98.24% sensitivity, and 95.27% specificity — the strongest overall performance of any model fitted so far.
+The Lasso model was tuned over 50 lambda values, with the optimal penalty selected at λ = 0.0036 based on ROC AUC notably larger than Ridge's λ = 0.0001, reflecting Lasso's ability to apply a stronger penalty while simultaneously eliminating irrelevant predictors. Lasso achieves 97.13% accuracy, 99.50% ROC AUC, 98.24% sensitivity, and 95.27% specificity the strongest overall performance of any model fitted so far.
 
-Lasso's defining advantage is automatic variable selection: it retained 10 of 19 predictors and dropped 9 entirely to zero. The top three retained variables — area_se (3.1267), area_mean (2.9482), and concave_points_worst (2.1765) — are the same dominant predictors identified across logistic regression, LDA, and Ridge, reinforcing the consistency of the signal across all modeling approaches. The 9 dropped variables (smoothness_mean, compactness_mean, symmetry_mean, texture_se, smoothness_se, concavity_se, concave_points_se, compactness_worst, fractal_dimension_worst) contributed little discriminative value after accounting for the retained predictors — Lasso's L1 penalty effectively performed the variable selection that Ridge and LDA cannot.
+Lasso's defining advantage is automatic variable selection: it retained 10 of 19 predictors and dropped 9 entirely to zero. The top three retained variables — area_se (3.1267), area_mean (2.9482), and concave_points_worst (2.1765) — are the same dominant predictors identified across logistic regression, LDA, and Ridge, reinforcing the consistency of the signal across all modeling approaches. The 9 dropped variables (smoothness_mean, compactness_mean, symmetry_mean, texture_se, smoothness_se, concavity_se, concave_points_se, compactness_worst, fractal_dimension_worst) contributed little discriminative value after accounting for the retained predictors Lasso's L1 penalty effectively performed the variable selection that Ridge and LDA cannot.
 
 ## Lasso and ridge Comparison
 
@@ -1762,7 +1761,7 @@ tibble::tribble(
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
 
-Ridge and Lasso both regularize logistic regression by penalizing coefficient magnitude, but they do so in fundamentally different ways — and the results clearly favor Lasso for this dataset. Both models match on sensitivity (98.24%), meaning they catch the same proportion of malignant tumors. However, Lasso dramatically outperforms Ridge in specificity (95.27% vs. 88.17%, a 7.10 percentage point gain) and overall accuracy (97.13% vs. 94.48%). Lasso also achieves a higher ROC AUC (99.50% vs. 99.16%), indicating stronger overall class separation. The key difference is variable selection: Ridge retains all 19 predictors with small, distributed coefficients, while Lasso eliminates 9 predictors entirely and concentrates the signal in 10 retained features. This produces a more parsimonious, interpretable, and better-performing model. The fact that Lasso achieves superior performance with nearly half the predictors removed suggests that the dropped variables were contributing noise rather than signal — Lasso's L1 penalty successfully identified and removed them, while Ridge's L2 penalty merely dampened their influence without eliminating it.
+Ridge and Lasso both regularize logistic regression by penalizing coefficient magnitude, but they do so in fundamentally different ways and the results clearly favor Lasso for this dataset. Both models match on sensitivity (98.24%), meaning they catch the same proportion of malignant tumors. However, Lasso dramatically outperforms Ridge in specificity (95.27% vs. 88.17%, a 7.10 percentage point gain) and overall accuracy (97.13% vs. 94.48%). Lasso also achieves a higher ROC AUC (99.50% vs. 99.16%), indicating stronger overall class separation. The key difference is variable selection: Ridge retains all 19 predictors with small, distributed coefficients, while Lasso eliminates 9 predictors entirely and concentrates the signal in 10 retained features. This produces a more parsimonious, interpretable, and better-performing model. The fact that Lasso achieves superior performance with nearly half the predictors removed suggests that the dropped variables were contributing noise rather than signal Lasso's L1 penalty successfully identified and removed them, while Ridge's L2 penalty merely dampened their influence without eliminating it.
 
 ---
 
@@ -1838,7 +1837,7 @@ poly_cv %>%
 
 Full polynomial Key Takeaway
 
-Under 10-fold cross-validation, the polynomial model achieves 92.92% accuracy, 95.06% ROC AUC, 93.63% sensitivity, and 91.73% specificity. While these are reasonable numbers in absolute terms, the model shows signs of estimation instability — the expanded feature space produces coefficients that fail to converge reliably, as evidenced by the NA coefficient table. This indicates that the polynomial terms introduced more noise than signal, and the added curvature did not capture meaningful nonlinear patterns beyond what the linear terms already explain. The relatively balanced sensitivity and specificity suggest the model is not strongly biased toward either class, but the overall discriminative power (ROC AUC = 95.06%) is noticeably lower than models operating on the original linear feature space. The high standard error on accuracy (0.0118) also reflects greater fold-to-fold variability, consistent with an overparameterized model that fits differently depending on which observations land in each fold.
+Under 10-fold cross-validation, the polynomial model achieves 92.92% accuracy, 95.06% ROC AUC, 93.63% sensitivity, and 91.73% specificity. While these are reasonable numbers in absolute terms, the model shows signs of estimation instability the expanded feature space produces coefficients that fail to converge reliably, as evidenced by the NA coefficient table. This indicates that the polynomial terms introduced more noise than signal, and the added curvature did not capture meaningful nonlinear patterns beyond what the linear terms already explain. The relatively balanced sensitivity and specificity suggest the model is not strongly biased toward either class, but the overall discriminative power (ROC AUC = 95.06%) is noticeably lower than models operating on the original linear feature space. The high standard error on accuracy (0.0118) also reflects greater fold-to-fold variability, consistent with an overparameterized model that fits differently depending on which observations land in each fold.
 
 ## Reduced Polynomial Model
 
@@ -1857,10 +1856,10 @@ Under 10-fold cross-validation, the polynomial model achieves 92.92% accuracy, 9
 </div>
 
 <div class="objective-explanation">
-The reduced polynomial model uses Lasso's top 4 predictors to build a smarter polynomial specification (8 terms instead of ~38), demonstrating <strong>model selection guided by prior results</strong>. MLE converges cleanly with no NA values, and the significant quadratic term for <code>texture_mean</code> (p = 0.04) reveals a genuine <strong>nonlinear relationship</strong> that linear models missed — while the other three predictors are adequately captured by linear terms alone.
+The reduced polynomial model uses Lasso's top 4 predictors to build a smarter polynomial specification (8 terms instead of ~38), demonstrating <strong>model selection guided by prior results</strong>. MLE converges cleanly with no NA values, and the significant quadratic term for <code>texture_mean</code> (p = 0.04) reveals a genuine <strong>nonlinear relationship</strong> that linear models missed while the other three predictors are adequately captured by linear terms alone.
 </div>
 
-The full polynomial model expanded all 19 predictors to ~38 features, overwhelming the training data and producing unstable estimates with weaker performance (92.92% accuracy, 95.06% ROC AUC). Rather than abandon polynomial terms entirely, we used our Lasso results to guide a smarter approach — restricting the expansion to only the four top Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean). This reduces the feature space to just 8 terms, combining Lasso's variable selection with polynomial expansion to test whether curvature improves the model without the noise.
+The full polynomial model expanded all 19 predictors to ~38 features, overwhelming the training data and producing unstable estimates with weaker performance (92.92% accuracy, 95.06% ROC AUC). Rather than abandon polynomial terms entirely, we used our Lasso results to guide a smarter approach  restricting the expansion to only the four top Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean). This reduces the feature space to just 8 terms, combining Lasso's variable selection with polynomial expansion to test whether curvature improves the model without the noise.
 
 Reduced Polynomial Recipe
 ```{r poly-reduced-recipe}
@@ -1935,7 +1934,7 @@ poly_reduced_cv %>%
 
 Reduced Polynomial Key Takeaway
 
-The reduced polynomial model, built on the four Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean), achieves 96.24% accuracy, 99.30% ROC AUC, 97.87% sensitivity, and 93.49% specificity. With only 8 features (4 predictors × 2 polynomial terms), the coefficient estimates converge cleanly — no NA values. Two terms reach statistical significance: concave_points_worst (linear, p < 0.0001) and texture_mean (both linear p = 0.0002 and quadratic p = 0.04), suggesting that texture_mean does exhibit a slight curved relationship with diagnosis. The quadratic terms for area_mean and area_se are not significant, indicating their relationship with log-odds is adequately captured by a straight line.
+The reduced polynomial model, built on the four Lasso-selected predictors (area_mean, concave_points_worst, area_se, texture_mean), achieves 96.24% accuracy, 99.30% ROC AUC, 97.87% sensitivity, and 93.49% specificity. With only 8 features (4 predictors × 2 polynomial terms), the coefficient estimates converge cleanly no NA values. Two terms reach statistical significance: concave_points_worst (linear, p < 0.0001) and texture_mean (both linear p = 0.0002 and quadratic p = 0.04), suggesting that texture_mean does exhibit a slight curved relationship with diagnosis. The quadratic terms for area_mean and area_se are not significant, indicating their relationship with log-odds is adequately captured by a straight line.
 
 
 ## Full and Reduced Polynomial Comparison 
@@ -1956,7 +1955,7 @@ tibble::tribble(
 
 ```
 
-The reduced polynomial model improves on every single metric — and does it with fewer than one-quarter of the features. The full model drowned in ~38 noisy terms, producing unstable estimates and weak discrimination. By letting Lasso identify the four most important predictors first, the reduced model concentrates polynomial expansion where it matters, achieves stable convergence, and recovers nearly all the discriminative power of the best linear models. The one meaningful finding is that texture_mean benefits from a quadratic term (p = 0.04), while the other three predictors are well-served by linear terms alone.
+The reduced polynomial model improves on every single metric and does it with fewer than one-quarter of the features. The full model drowned in ~38 noisy terms, producing unstable estimates and weak discrimination. By letting Lasso identify the four most important predictors first, the reduced model concentrates polynomial expansion where it matters, achieves stable convergence, and recovers nearly all the discriminative power of the best linear models. The one meaningful finding is that texture_mean benefits from a quadratic term (p = 0.04), while the other three predictors are well-served by linear terms alone.
 
 ---
 
@@ -1981,7 +1980,7 @@ The reduced polynomial model improves on every single metric — and does it wit
 </div>
 
 <div class="objective-explanation">
-Interaction terms test whether the effect of one predictor <strong>depends on the level of another</strong> — a hypothesis grounded in the probabilistic structure of the GLM. The non-significant interaction terms (p = 0.35 and p = 0.60) provide evidence for an <strong>additive model</strong>, a finding that is straightforward to <strong>communicate to a general audience</strong>: each predictor independently contributes to diagnosis without synergistic effects. This negative result is itself a form of model selection — confirming that the simpler additive model is preferred.
+Interaction terms test whether the effect of one predictor <strong>depends on the level of another</strong> a hypothesis grounded in the probabilistic structure of the GLM. The non-significant interaction terms (p = 0.35 and p = 0.60) provide evidence for an <strong>additive model</strong>, a finding that is straightforward to <strong>communicate to a general audience</strong>: each predictor independently contributes to diagnosis without synergistic effects. This negative result is itself a form of model selection confirming that the simpler additive model is preferred.
 </div>
 
 Interaction terms allow the effect of one predictor on diagnosis to depend on the level of another predictor. An example, the relationship between area_mean and malignancy might differ for tumors with high vs. low texture_mean. This captures synergistic effects that main-effects-only models miss.
@@ -2060,7 +2059,7 @@ inter_reduced_cv %>%
   theme_minimal(base_size = 14)
 ```
 
-The reduced interaction model (6 features) achieves strong performance (95.58% accuracy, 99.37% ROC AUC), but neither interaction term is statistically significant (p = 0.35 and p = 0.60). All four main effects individually are highly significant. This confirms that the predictors contribute additively — tumor size, texture, concavity, and area variability each independently influence diagnosis without synergistic effects. The interaction terms add no meaningful predictive value beyond what the main effects already capture.
+The reduced interaction model (6 features) achieves strong performance (95.58% accuracy, 99.37% ROC AUC), but neither interaction term is statistically significant (p = 0.35 and p = 0.60). All four main effects individually are highly significant. This confirms that the predictors contribute additively tumor size, texture, concavity, and area variability each independently influence diagnosis without synergistic effects. The interaction terms add no meaningful predictive value beyond what the main effects already capture.
 
 ---
 
@@ -2081,7 +2080,7 @@ The reduced interaction model (6 features) achieves strong performance (95.58% a
 </div>
 
 <div class="objective-explanation">
-The grand comparison evaluates all nine candidate models under a <strong>unified 10-fold cross-validation framework</strong>, selecting Lasso as the winner based on accuracy, ROC AUC, sensitivity, and specificity. The comparison table is built <strong>programmatically</strong> from each model's CV object — no manual entry. The final recommendation — Lasso with 10 predictors achieving 97% accuracy — is <strong>expressed in terms a clinician can act on</strong>, fulfilling the goal of communicating statistical results to a general audience.
+The grand comparison evaluates all nine candidate models under a <strong>unified 10-fold cross-validation framework</strong>, selecting Lasso as the winner based on accuracy, ROC AUC, sensitivity, and specificity. The comparison table is built <strong>programmatically</strong> from each model's CV object no manual entry. The final recommendation Lasso with 10 predictors achieving 97% accuracy is <strong>expressed in terms a clinician can act on</strong>, fulfilling the goal of communicating statistical results to a general audience.
 </div>
 
 ```{r}
@@ -2119,7 +2118,7 @@ grand_table %>%
 
 ## Model Selection Summary
 
-I evaluated nine models using 10-fold cross-validation. Lasso logistic regression was the top performer (97.13% accuracy, 99.50% ROC AUC) after retaining 10 of 19 predictors through its L1 penalty — dropping 9 redundant features while achieving the highest scores on every metric. Reduced models consistently outperformed their full counterparts, reinforcing that fewer, well-chosen features beat more features at every level. LDA captured the most malignant cases (98.94% sensitivity) but at the cost of more false positives, while QDA offered a more balanced tradeoff. Ridge mirrored standard logistic regression, confirming that multicollinearity was already handled during preprocessing. The full polynomial model was the weakest due to overparameterization, and interaction terms were not significant, confirming an additive relationship among predictors. Based on these results, I selected Lasso as the final model — 10 predictors, 97% accuracy, and the strongest balance of performance and simplicity.
+I evaluated nine models using 10-fold cross-validation. Lasso logistic regression was the top performer (97.13% accuracy, 99.50% ROC AUC) after retaining 10 of 19 predictors through its L1 penalty dropping 9 redundant features while achieving the highest scores on every metric. Reduced models consistently outperformed their full counterparts, reinforcing that fewer, well-chosen features beat more features at every level. LDA captured the most malignant cases (98.94% sensitivity) but at the cost of more false positives, while QDA offered a more balanced tradeoff. Ridge mirrored standard logistic regression, confirming that multicollinearity was already handled during preprocessing. The full polynomial model was the weakest due to overparameterization, and interaction terms were not significant, confirming an additive relationship among predictors. Based on these results, I selected Lasso as the final model 10 predictors, 97% accuracy, and the strongest balance of performance and simplicity.
 
 ---
 
