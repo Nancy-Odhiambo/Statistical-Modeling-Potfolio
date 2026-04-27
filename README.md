@@ -3,7 +3,7 @@ Predicting Breast Cancer Diagnosis
 Author: Nancy Odhiambo  
 
 ## Overview  
-This repository contains my STA 631 Statistical Modeling Portfolio, developed using the Breast Cancer Wisconsin Diagnostic Dataset. The project demonstrates a complete statistical modeling workflow, including data preprocessing, exploratory analysis, model development, regularization, classification, and performance evaluation.  
+This repository contains a Statistical Modeling Portfolio, developed using the Breast Cancer Wisconsin Diagnostic Dataset. The project demonstrates a complete statistical modeling workflow, including data preprocessing, exploratory analysis, model development, regularization, classification, and performance evaluation.  
 
 The portfolio emphasizes reproducibility, model interpretability, and principled model comparison using the tidymodels framework in R.
 
@@ -17,9 +17,6 @@ https://nancy-odhiambo.github.io/Statistical-Modeling-Potfolio/
 | `index.html` | Published portfolio (GitHub Pages) |
 | `Statistical Modeling Portfolio.Rmd` | Main R Markdown source |
 | `Breast_cancer_dataset.csv` | Modeling dataset |
-| `LICENSE` | MIT License |
-| `.Rproj` | RStudio project file |
-| `README.md` | Documentation |
 
 ## Modeling Workflow  
 This portfolio implements a structured and reproducible modeling pipeline.
@@ -45,7 +42,7 @@ This portfolio implements a structured and reproducible modeling pipeline.
 - Comparative model assessment  
 
 ## Tools and Technologies  
-- R  
+- Rmarkdown 
 - tidyverse  
 - tidymodels (recipes, workflows, parsnip, yardstick)  
 - glmnet  
@@ -54,7 +51,7 @@ This portfolio implements a structured and reproducible modeling pipeline.
 - kableExtra  
 
 ## Purpose  
-This portfolio demonstrates my ability to:  
+This portfolio demonstrates the ability to:  
 - Build reproducible and modular modeling workflows  
 - Apply appropriate statistical learning methods to biomedical data  
 - Evaluate and compare models using rigorous validation techniques  
